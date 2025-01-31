@@ -7,9 +7,10 @@
 
 import UIKit
 
-final class TaskListView: UIViewController {
+final class TaskListView: UIViewController, TaskListViewProtocol {
 
     private var tasks: [Task] = []
+    var presenter: TaskListPresenterProtocol?
 
     private let tableView = UITableView()
     private let taskFooterView = UIView()
@@ -18,30 +19,12 @@ final class TaskListView: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        loadTasks()
+        presenter?.viewDidLoad()
 
         view.backgroundColor = .black
         setupNavigationBar()
         setupFooter()
         setupTableView()
-    }
-
-    private func loadTasks() {
-        tasks = [
-            Task(
-                title: "Купить продукты",
-                description: "Молоко, яйца, сливочный сыр, томатная паста, гречка, макароны," +
-                " туалетная бумага, творог, мыло, средство для ванной, булочки для завтрака",
-                dateCreated: "01/01/2025",
-                isCompleted: false
-            ),
-            Task(
-                title: "Почитать книгу",
-                description: "Минимум 20 страниц",
-                dateCreated: "15/01/2025",
-                isCompleted: true
-            )
-        ]
     }
 
     private func setupNavigationBar() {
@@ -89,7 +72,7 @@ final class TaskListView: UIViewController {
 
         taskCountLabel.font = UIFont.systemFont(ofSize: 11)
         taskCountLabel.textColor = .white
-        updateTaskCountLabel()
+        updateTaskCountLabel(with: "")
 
         taskCountLabel.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
@@ -115,22 +98,16 @@ final class TaskListView: UIViewController {
         ])
     }
 
-    private func updateTaskCountLabel() {
-        let taskCount = tasks.count
-        let taskWord: String
-        if taskCount == 1 {
-            taskWord = "задача"
-        } else if taskCount > 1 && taskCount < 5 {
-            taskWord = "задачи"
-        } else {
-            taskWord = "задач"
-        }
-
-        taskCountLabel.text = "\(taskCount) \(taskWord)"
+    @objc private func addTaskTapped() {
+        presenter?.didTapAddTask()
     }
 
-    @objc private func addTaskTapped() {
-        print("Кнопка 'Добавить новую задачу' нажата")
+    func updateTaskCountLabel(with text: String) {
+        taskCountLabel.text = text
+    }
+
+    func reloadTable() {
+        tableView.reloadData()
     }
 }
 
@@ -138,25 +115,22 @@ final class TaskListView: UIViewController {
 
 extension TaskListView: UITableViewDataSource, UITableViewDelegate {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 2
+        return presenter?.numberOfRows() ?? 0
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard let cell = tableView.dequeueReusableCell(
-            withIdentifier: TaskCell.identifier,
-            for: indexPath
-        ) as? TaskCell else {
+        guard let task = presenter?.task(at: indexPath.row),
+              let cell = tableView.dequeueReusableCell(
+                withIdentifier: TaskCell.identifier,
+                for: indexPath
+              ) as? TaskCell else {
             return UITableViewCell()
         }
-        let task = tasks[indexPath.row]
-
-        cell.configure(
-            with: task.title,
-            description: task.description,
-            date: task.dateCreated,
-            isCompleted: task.isCompleted
-        )
-        cell.selectionStyle = .none
+        cell.configure(with: task)
         return cell
+    }
+
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        presenter?.didSelectTask(at: indexPath.row)
     }
 }
