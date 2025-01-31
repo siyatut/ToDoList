@@ -7,16 +7,17 @@
 
 import UIKit
 
-final class TaskCell: UITableViewCell {
+final class TaskCell: UITableViewCell, TaskCellViewProtocol {
 
     static let identifier = "TaskCell"
+    
+    // MARK: - UI components
 
     private let checkmarkButton: UIButton = {
         let button = UIButton(type: .system)
         let config = UIImage.SymbolConfiguration(pointSize: 24, weight: .medium)
         button.setImage(UIImage(systemName: "circle", withConfiguration: config), for: .normal)
         button.tintColor = .darkGray
-        button.addTarget(TaskCell.self, action: #selector(toggleCheckmark), for: .touchUpInside)
         return button
     }()
 
@@ -42,26 +43,37 @@ final class TaskCell: UITableViewCell {
         label.textColor = .darkGray
         return label
     }()
-
+    
+    // MARK: - Properties
+    
     private var isCompleted = false
+    private var presenter: TaskCellPresenterProtocol?
+    
+    // MARK: - Init
 
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         backgroundColor = .clear
         selectionStyle = .none
-
-        contentView.addSubview(checkmarkButton)
-        contentView.addSubview(titleLabel)
-        contentView.addSubview(descriptionLabel)
-        contentView.addSubview(dateLabel)
-
+        
+        setupUI()
         setupConstraints()
+        addActions()
     }
 
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-
+    
+    // MARK: - Setup UI
+    
+    private func setupUI() {
+        contentView.addSubview(checkmarkButton)
+        contentView.addSubview(titleLabel)
+        contentView.addSubview(descriptionLabel)
+        contentView.addSubview(dateLabel)
+    }
+    
     private func setupConstraints() {
         checkmarkButton.translatesAutoresizingMaskIntoConstraints = false
         titleLabel.translatesAutoresizingMaskIntoConstraints = false
@@ -87,44 +99,43 @@ final class TaskCell: UITableViewCell {
             dateLabel.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -12)
         ])
     }
-
-    func configure(with title: String, description: String, date: String, isCompleted: Bool) {
-        titleLabel.text = title
-        descriptionLabel.text = description
+    
+    private func addActions() {
+        checkmarkButton.addTarget(self, action: #selector(checkmarkTapped), for: .touchUpInside)
+    }
+    
+    // MARK: - Public Methods
+    
+    func setPresenter(_ presenter: TaskCellPresenterProtocol) {
+        self.presenter = presenter
+    }
+    
+    func configure(with task: Task) {
+        presenter?.configure(task: task)
+    }
+    
+    func display(taskTitle: String, taskDescription: String, date: String, isCompleted: Bool) {
+        titleLabel.text = taskTitle
+        descriptionLabel.text = taskDescription
         dateLabel.text = date
-        self.isCompleted = isCompleted
-        updateUI()
-    }
-
-    @objc private func toggleCheckmark() {
-        isCompleted.toggle()
-        updateUI()
-    }
-
-    private func updateUI() {
-        let config = UIImage.SymbolConfiguration(pointSize: 24, weight: .medium)
-        let imageName = isCompleted ? "checkmark.circle" : "circle"
-        let color = isCompleted ? UIColor.systemYellow : UIColor.darkGray
-        checkmarkButton.setImage(UIImage(systemName: imageName, withConfiguration: config), for: .normal)
-        checkmarkButton.tintColor = color
-
+        
+        
         let textColor: UIColor = isCompleted ? .darkGray : .white
         let titleAttributes: [NSAttributedString.Key: Any] = [
             .foregroundColor: textColor,
             .strikethroughStyle: isCompleted ? NSUnderlineStyle.single.rawValue : 0
         ]
-        let descriptionAttributes: [NSAttributedString.Key: Any] = [
-            .foregroundColor: textColor,
-            .strikethroughStyle: isCompleted ? NSUnderlineStyle.single.rawValue : 0
-        ]
-
-        titleLabel.attributedText = NSAttributedString(
-            string: titleLabel.text ?? "",
-            attributes: titleAttributes
-        )
-        descriptionLabel.attributedText = NSAttributedString(
-            string: descriptionLabel.text ?? "",
-            attributes: descriptionAttributes
-        )
+        titleLabel.attributedText = NSAttributedString(string: taskTitle, attributes: titleAttributes)
+        descriptionLabel.attributedText = NSAttributedString(string: taskDescription, attributes: titleAttributes)
+        
+        let imageName = isCompleted ? "checkmark.circle" : "circle"
+        checkmarkButton.setImage(UIImage(systemName: imageName), for: .normal)
+        checkmarkButton.tintColor = isCompleted ? .systemYellow : .darkGray
+    }
+    
+    // MARK: - Actions
+    
+    @objc private func checkmarkTapped() {
+        presenter?.toggleTaskCompletion()
     }
 }
