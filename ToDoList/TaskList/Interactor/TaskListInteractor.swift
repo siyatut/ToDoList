@@ -8,20 +8,34 @@
 import UIKit
 
 final class TaskListInteractor: TaskListInteractorProtocol {
-    func fetchTasks() -> [Task] {
-        return [
-            Task(
-                title: "Купить продукты",
-                description: "Хлеб, молоко",
-                dateCreated: "01.01.2025",
-                isCompleted: false
-            ),
-            Task(
-                title: "Прочитать книгу",
-                description: "20 страниц в день",
-                dateCreated: "02.01.2025",
-                isCompleted: true
-            )
-        ]
+    
+    private let networkManager: NetworkManagerProtocol
+    private let urlString = "https://dummyjson.com/todos"
+    
+    init(networkManager: NetworkManagerProtocol = NetworkManager()) {
+        self.networkManager = networkManager
+    }
+    
+    func fetchTasks(completion: @escaping ([Task]) -> Void) {
+        networkManager.fetchTasks(from: urlString) { result in
+            DispatchQueue.main.async {
+                switch result {
+                case .success(let temporaryTasks):
+                    let tasks = temporaryTasks.map { temporaryTask in
+                        Task(
+                            id: temporaryTask.id,
+                            title: temporaryTask.todo,
+                            description: "Задача от пользователя с ID \(temporaryTask.userId)",
+                            dateCreated: "01/01/2025",
+                            isCompleted: temporaryTask.completed
+                        )
+                    }
+                    completion(tasks)
+                case .failure(let error):
+                    print("Error fetching tasks: \(error.localizedDescription)")
+                    completion([])
+                }
+            }
+        }
     }
 }
