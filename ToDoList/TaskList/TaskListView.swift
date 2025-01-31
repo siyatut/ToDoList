@@ -9,6 +9,8 @@ import UIKit
 
 final class TaskListView: UIViewController {
 
+    private var tasks: [Task] = []
+
     private let tableView = UITableView()
     private let taskFooterView = UIView()
     private let taskCountLabel = UILabel()
@@ -16,11 +18,30 @@ final class TaskListView: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        loadTasks()
 
         view.backgroundColor = .black
         setupNavigationBar()
         setupFooter()
         setupTableView()
+    }
+
+    private func loadTasks() {
+        tasks = [
+            Task(
+                title: "Купить продукты",
+                description: "Молоко, яйца, сливочный сыр, томатная паста, гречка, макароны," +
+                " туалетная бумага, творог, мыло, средство для ванной, булочки для завтрака",
+                dateCreated: "01/01/2025",
+                isCompleted: false
+            ),
+            Task(
+                title: "Почитать книгу",
+                description: "Минимум 20 страниц",
+                dateCreated: "15/01/2025",
+                isCompleted: true
+            )
+        ]
     }
 
     private func setupNavigationBar() {
@@ -66,9 +87,9 @@ final class TaskListView: UIViewController {
             taskFooterView.heightAnchor.constraint(equalToConstant: 83)
         ])
 
-        taskCountLabel.text = "0 Задач"
         taskCountLabel.font = UIFont.systemFont(ofSize: 11)
         taskCountLabel.textColor = .white
+        updateTaskCountLabel()
 
         taskCountLabel.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
@@ -94,6 +115,11 @@ final class TaskListView: UIViewController {
         ])
     }
 
+    private func updateTaskCountLabel() {
+        let taskCount = tasks.count
+        taskCountLabel.text = "\(taskCount) \(taskCount == 1 ? "задача" : taskCount > 1 && taskCount < 5 ? "задачи" : "задач")"
+    }
+
     @objc private func addTaskTapped() {
         print("Кнопка 'Добавить новую задачу' нажата")
     }
@@ -103,7 +129,7 @@ final class TaskListView: UIViewController {
 
 extension TaskListView: UITableViewDataSource, UITableViewDelegate {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 10
+        return 2
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -113,7 +139,14 @@ extension TaskListView: UITableViewDataSource, UITableViewDelegate {
         ) as? TaskCell else {
             return UITableViewCell()
         }
-        cell.configure(with: "Задача \(indexPath.row + 1)")
+        let task = tasks[indexPath.row]
+
+        cell.configure(
+            with: task.title,
+            description: task.description,
+            date: task.dateCreated,
+            isCompleted: task.isCompleted
+        )
         cell.selectionStyle = .none
         return cell
     }
