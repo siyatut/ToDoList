@@ -117,7 +117,16 @@ final class TaskListView: UIViewController {
 
     private func updateTaskCountLabel() {
         let taskCount = tasks.count
-        taskCountLabel.text = "\(taskCount) \(taskCount == 1 ? "задача" : taskCount > 1 && taskCount < 5 ? "задачи" : "задач")"
+        let taskWord: String
+        if taskCount == 1 {
+            taskWord = "задача"
+        } else if taskCount > 1 && taskCount < 5 {
+            taskWord = "задачи"
+        } else {
+            taskWord = "задач"
+        }
+
+        taskCountLabel.text = "\(taskCount) \(taskWord)"
     }
 
     @objc private func addTaskTapped() {
