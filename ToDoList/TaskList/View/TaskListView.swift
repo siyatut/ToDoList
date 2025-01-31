@@ -72,7 +72,7 @@ final class TaskListView: UIViewController, TaskListViewProtocol {
 
         taskCountLabel.font = UIFont.systemFont(ofSize: 11)
         taskCountLabel.textColor = .white
-        updateTaskCountLabel(with: "")
+        updateTaskCountLabel()
 
         taskCountLabel.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
@@ -102,11 +102,28 @@ final class TaskListView: UIViewController, TaskListViewProtocol {
         presenter?.didTapAddTask()
     }
 
-    func updateTaskCountLabel(with text: String) {
-        taskCountLabel.text = text
+    func updateTaskCountLabel() {
+        let taskCount = tasks.count
+        let taskWord: String
+
+        if taskCount == 1 {
+            taskWord = "задача"
+        } else if taskCount > 1 && taskCount < 5 {
+            taskWord = "задачи"
+        } else {
+            taskWord = "задач"
+        }
+
+        let taskCountText = "\(taskCount) \(taskWord)"
+
+        DispatchQueue.main.async {
+            self.taskCountLabel.text = taskCountText
+        }
     }
 
-    func reloadTable() {
+    func updateTasks(_ tasks: [Task]) {
+        self.tasks = tasks
+        updateTaskCountLabel()
         tableView.reloadData()
     }
 }

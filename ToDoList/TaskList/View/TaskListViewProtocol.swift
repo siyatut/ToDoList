@@ -8,6 +8,5 @@
 import UIKit
 
 protocol TaskListViewProtocol: AnyObject {
-    func updateTaskCountLabel(with text: String)
-    func reloadTable()
+    func updateTasks(_ tasks: [Task])
 }

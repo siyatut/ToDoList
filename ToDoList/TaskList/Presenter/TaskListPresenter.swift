@@ -43,8 +43,6 @@ final class TaskListPresenter: TaskListPresenterProtocol {
     }
 
     private func updateView() {
-        let taskCountText = "\(tasks.count) задач"
-        view?.updateTaskCountLabel(with: taskCountText)
-        view?.reloadTable()
+        view?.updateTasks(tasks)
     }
 }
