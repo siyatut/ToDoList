@@ -107,9 +107,24 @@ final class TaskCell: UITableViewCell {
         let color = isCompleted ? UIColor.systemYellow : UIColor.darkGray
         checkmarkButton.setImage(UIImage(systemName: imageName, withConfiguration: config), for: .normal)
         checkmarkButton.tintColor = color
-// Зачёркивание ещё сюда добавить
+
         let textColor: UIColor = isCompleted ? .darkGray : .white
-        titleLabel.textColor = textColor
-        descriptionLabel.textColor = textColor
+        let titleAttributes: [NSAttributedString.Key: Any] = [
+            .foregroundColor: textColor,
+            .strikethroughStyle: isCompleted ? NSUnderlineStyle.single.rawValue : 0
+        ]
+        let descriptionAttributes: [NSAttributedString.Key: Any] = [
+            .foregroundColor: textColor,
+            .strikethroughStyle: isCompleted ? NSUnderlineStyle.single.rawValue : 0
+        ]
+
+        titleLabel.attributedText = NSAttributedString(
+            string: titleLabel.text ?? "",
+            attributes: titleAttributes
+        )
+        descriptionLabel.attributedText = NSAttributedString(
+            string: descriptionLabel.text ?? "",
+            attributes: descriptionAttributes
+        )
     }
 }
