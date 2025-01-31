@@ -9,6 +9,7 @@ import UIKit
 
 final class TaskListView: UIViewController {
 
+    private let tableView = UITableView()
     private let taskFooterView = UIView()
     private let taskCountLabel = UILabel()
     private let addTaskButton = UIButton()
@@ -19,6 +20,7 @@ final class TaskListView: UIViewController {
         view.backgroundColor = .black
         setupNavigationBar()
         setupFooter()
+        setupTableView()
     }
 
     private func setupNavigationBar() {
@@ -29,6 +31,24 @@ final class TaskListView: UIViewController {
 
         let titleItem = UIBarButtonItem(customView: titleLabel)
         navigationItem.leftBarButtonItem = titleItem
+    }
+
+    private func setupTableView() {
+        tableView.backgroundColor = .black
+        tableView.separatorStyle = .singleLine
+        tableView.separatorColor = .gray
+        tableView.register(TaskCell.self, forCellReuseIdentifier: TaskCell.identifier)
+        tableView.dataSource = self
+        tableView.delegate = self
+
+        view.addSubview(tableView)
+        tableView.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            tableView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            tableView.bottomAnchor.constraint(equalTo: taskFooterView.topAnchor)
+        ])
     }
 
     private func setupFooter() {
@@ -76,5 +96,25 @@ final class TaskListView: UIViewController {
 
     @objc private func addTaskTapped() {
         print("Кнопка 'Добавить новую задачу' нажата")
+    }
+}
+
+// MARK: - UITableViewDataSource & UITableViewDelegate
+
+extension TaskListView: UITableViewDataSource, UITableViewDelegate {
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return 10
+    }
+
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        guard let cell = tableView.dequeueReusableCell(
+            withIdentifier: TaskCell.identifier,
+            for: indexPath
+        ) as? TaskCell else {
+            return UITableViewCell()
+        }
+        cell.configure(with: "Задача \(indexPath.row + 1)")
+        cell.selectionStyle = .none
+        return cell
     }
 }
