@@ -13,4 +13,5 @@ protocol TaskListPresenterProtocol: AnyObject {
     func numberOfRows() -> Int
     func task(at index: Int) -> Task
     func didSelectTask(at index: Int)
+    func toggleTaskCompletion(at index: Int)
 }

@@ -7,9 +7,13 @@
 
 import UIKit
 
-final class TaskCell: UITableViewCell, TaskCellViewProtocol {
+final class TaskCell: UITableViewCell {
 
     static let identifier = "TaskCell"
+
+    // MARK: - Callback
+
+    var onCheckmarkTapped: (() -> Void)?
 
     // MARK: - UI components
 
@@ -47,7 +51,6 @@ final class TaskCell: UITableViewCell, TaskCellViewProtocol {
     // MARK: - Properties
 
     private var isCompleted = false
-    private var presenter: TaskCellPresenterProtocol?
 
     // MARK: - Init
 
@@ -104,37 +107,26 @@ final class TaskCell: UITableViewCell, TaskCellViewProtocol {
         checkmarkButton.addTarget(self, action: #selector(checkmarkTapped), for: .touchUpInside)
     }
 
-    // MARK: - Public Methods
-
-    func setPresenter(_ presenter: TaskCellPresenterProtocol) {
-        self.presenter = presenter
+    @objc private func checkmarkTapped() {
+        onCheckmarkTapped?()
     }
+    // MARK: - Configure
 
     func configure(with task: Task) {
-        presenter?.configure(task: task)
-    }
-
-    func display(taskTitle: String, taskDescription: String, date: String, isCompleted: Bool) {
-        titleLabel.text = taskTitle
-        descriptionLabel.text = taskDescription
-        dateLabel.text = date
+        titleLabel.text = task.title
+        descriptionLabel.text = task.description
+        dateLabel.text = task.dateCreated
 
         let textColor: UIColor = isCompleted ? .darkGray : .white
         let titleAttributes: [NSAttributedString.Key: Any] = [
             .foregroundColor: textColor,
             .strikethroughStyle: isCompleted ? NSUnderlineStyle.single.rawValue : 0
         ]
-        titleLabel.attributedText = NSAttributedString(string: taskTitle, attributes: titleAttributes)
-        descriptionLabel.attributedText = NSAttributedString(string: taskDescription, attributes: titleAttributes)
+        titleLabel.attributedText = NSAttributedString(string: task.title, attributes: titleAttributes)
+        descriptionLabel.attributedText = NSAttributedString(string: task.description, attributes: titleAttributes)
 
         let imageName = isCompleted ? "checkmark.circle" : "circle"
         checkmarkButton.setImage(UIImage(systemName: imageName), for: .normal)
         checkmarkButton.tintColor = isCompleted ? .systemYellow : .darkGray
-    }
-
-    // MARK: - Actions
-
-    @objc private func checkmarkTapped() {
-        presenter?.toggleTaskCompletion()
     }
 }

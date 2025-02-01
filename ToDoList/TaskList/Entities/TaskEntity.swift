@@ -23,5 +23,5 @@ struct Task: Decodable {
     let title: String
     let description: String
     let dateCreated: String
-    let isCompleted: Bool
+    var isCompleted: Bool
 }

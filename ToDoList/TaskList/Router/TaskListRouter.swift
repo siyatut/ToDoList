@@ -8,13 +8,25 @@
 import UIKit
 
 final class TaskListRouter: TaskListRouterProtocol {
-    
+
     weak var viewController: UIViewController?
-    
+
+    static func createModule() -> UIViewController {
+        let view = TaskListView()
+        let interactor = TaskListInteractor()
+        let router = TaskListRouter()
+        let presenter = TaskListPresenter(view: view, interactor: interactor, router: router)
+
+        view.presenter = presenter
+        router.viewController = view
+
+        return view
+    }
+
     func navigateToAddTask() {
         print("Navigate to Add Task screen")
     }
-    
+
     func navigateToTaskDetail(task: Task) {
         print("Navigate to Task Detail screen for: \(task.title)")
     }

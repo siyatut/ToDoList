@@ -20,7 +20,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
         let window = UIWindow(windowScene: windowScene)
         let taskListView = TaskListView()
-        let navigationController = UINavigationController(rootViewController: taskListView)
+        let navigationController = UINavigationController(rootViewController: TaskListRouter.createModule())
         window.rootViewController = navigationController
         window.makeKeyAndVisible()
 
