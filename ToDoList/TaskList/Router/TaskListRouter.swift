@@ -9,7 +9,11 @@ import UIKit
 
 final class TaskListRouter: TaskListRouterProtocol {
 
+    // MARK: - Dependencies
+
     weak var viewController: UIViewController?
+
+    // MARK: - Module Creation
 
     static func createModule() -> UIViewController {
         let view = TaskListView()
@@ -22,6 +26,8 @@ final class TaskListRouter: TaskListRouterProtocol {
 
         return view
     }
+
+    // MARK: - Navigation
 
     func navigateToAddTask() {
         print("Navigate to Add Task screen")

@@ -9,6 +9,8 @@ import UIKit
 
 final class TaskCell: UITableViewCell {
 
+    // MARK: - Identifier
+
     static let identifier = "TaskCell"
 
     // MARK: - Callback
@@ -77,6 +79,8 @@ final class TaskCell: UITableViewCell {
         contentView.addSubview(dateLabel)
     }
 
+    // MARK: - Setup constraints
+
     private func setupConstraints() {
         checkmarkButton.translatesAutoresizingMaskIntoConstraints = false
         titleLabel.translatesAutoresizingMaskIntoConstraints = false
@@ -102,6 +106,8 @@ final class TaskCell: UITableViewCell {
             dateLabel.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -12)
         ])
     }
+
+    // MARK: - Actions
 
     private func addActions() {
         checkmarkButton.addTarget(self, action: #selector(checkmarkTapped), for: .touchUpInside)

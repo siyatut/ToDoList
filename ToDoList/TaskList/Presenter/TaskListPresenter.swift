@@ -9,6 +9,8 @@ import UIKit
 
 final class TaskListPresenter: TaskListPresenterProtocol {
 
+    // MARK: - Dependencies
+
     weak var view: TaskListViewProtocol?
     private var interactor: TaskListInteractorProtocol
     private var router: TaskListRouterProtocol
@@ -33,7 +35,7 @@ final class TaskListPresenter: TaskListPresenterProtocol {
         fetchTasks()
     }
 
-    // MARK: - Task Loading
+    // MARK: - Task loading
 
     private func fetchTasks() {
         print("Presenter: fetchTasks called")
@@ -44,6 +46,8 @@ final class TaskListPresenter: TaskListPresenterProtocol {
             self.view?.updateTasks(fetchedTasks)
         }
     }
+
+    // MARK: - Navigation
 
     func didTapAddTask() {
         router.navigateToAddTask()
@@ -59,7 +63,7 @@ final class TaskListPresenter: TaskListPresenterProtocol {
         return tasks[index]
     }
 
-    // MARK: - User Actions
+    // MARK: - User actions
 
     func didSelectTask(at index: Int) {
         let task = tasks[index]

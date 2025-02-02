@@ -7,11 +7,10 @@
 
 import UIKit
 
-protocol NetworkManagerProtocol {
-    func fetchTasks(from urlString: String, completion: @escaping (Result<[TemporaryTask], Error>) -> Void)
-}
-
 final class NetworkManager: NetworkManagerProtocol {
+
+    // MARK: - Fetch tasks
+
     func fetchTasks(from urlString: String, completion: @escaping (Result<[TemporaryTask], Error>) -> Void) {
         print("NetworkManager: fetchTasks called")
         guard let url = URL(string: urlString) else {

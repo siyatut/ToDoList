@@ -9,13 +9,19 @@ import UIKit
 
 final class TaskListInteractor: TaskListInteractorProtocol {
 
+    // MARK: - Dependencies
+
     private let networkManager: NetworkManagerProtocol
     private var cachedTasks: [Task] = []
     private let urlString = "https://dummyjson.com/todos"
 
+    // MARK: - Init
+
     init(networkManager: NetworkManagerProtocol = NetworkManager()) {
         self.networkManager = networkManager
     }
+
+    // MARK: - Fetch tasks
 
     func fetchTasks(completion: @escaping ([Task]) -> Void) {
         DispatchQueue.global(qos: .background).async {
@@ -45,6 +51,8 @@ final class TaskListInteractor: TaskListInteractorProtocol {
             }
         }
     }
+
+    // MARK: - Update task
 
     func updateTask(_ task: Task) {
         DispatchQueue.global(qos: .background).async {

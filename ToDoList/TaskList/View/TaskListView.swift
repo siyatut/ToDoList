@@ -9,13 +9,19 @@ import UIKit
 
 final class TaskListView: UIViewController, TaskListViewProtocol {
 
+    // MARK: - Properties
+
     private var tasks: [Task] = []
     var presenter: TaskListPresenterProtocol?
+
+    // MARK: - UI components
 
     private let tableView = UITableView()
     private let taskFooterView = UIView()
     private let taskCountLabel = UILabel()
     private let addTaskButton = UIButton()
+
+    // MARK: - Lifecycle
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -27,6 +33,8 @@ final class TaskListView: UIViewController, TaskListViewProtocol {
         setupFooter()
         setupTableView()
     }
+
+    // MARK: - UI setup
 
     private func setupNavigationBar() {
         let titleLabel = UILabel()
@@ -99,9 +107,13 @@ final class TaskListView: UIViewController, TaskListViewProtocol {
         ])
     }
 
+    // MARK: - Actions
+
     @objc private func addTaskTapped() {
         presenter?.didTapAddTask()
     }
+
+    // MARK: - UI updates
 
     func updateTaskCountLabel() {
         let taskCount = tasks.count
