@@ -29,7 +29,7 @@ final class TaskListInteractor: TaskListInteractorProtocol, TaskUpdating {
 
     func fetchTasks(completion: @escaping ([Task]) -> Void) {
         DispatchQueue.global(qos: .background).async {
-            self.networkManager.fetchTasks(from: "https://dummyjson.com/todos") { result in
+            self.networkManager.fetchTasks(from: self.urlString) { result in
                 switch result {
                 case .success(let temporaryTasks):
                     let tasks = temporaryTasks.map(TaskMapper.map)

@@ -114,7 +114,7 @@ final class TaskListView: UIViewController, TaskListViewProtocol {
 
     // MARK: - UI updates
 
-    func updateTaskCountLabel() {
+    private func updateTaskCountLabel() {
         let taskCount = tasks.count
         let taskWord: String
 
