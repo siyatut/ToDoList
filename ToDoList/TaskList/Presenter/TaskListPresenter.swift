@@ -14,6 +14,8 @@ final class TaskListPresenter: TaskListPresenterProtocol {
     private var router: TaskListRouterProtocol
     private var tasks: [Task] = []
 
+    // MARK: - Init
+
     init(
         view: TaskListViewProtocol,
         interactor: TaskListInteractorProtocol,
@@ -24,14 +26,30 @@ final class TaskListPresenter: TaskListPresenterProtocol {
         self.router = router
     }
 
+    // MARK: - Lifecycle
+
     func viewDidLoad() {
         print("Presenter: viewDidLoad called")
         fetchTasks()
     }
 
+    // MARK: - Task Loading
+
+    private func fetchTasks() {
+        print("Presenter: fetchTasks called")
+        interactor.fetchTasks { [weak self] fetchedTasks in
+            guard let self = self else { return }
+            print("Presenter: tasks fetched - \(fetchedTasks.count)")
+            self.tasks = fetchedTasks
+            self.view?.updateTasks(fetchedTasks)
+        }
+    }
+
     func didTapAddTask() {
         router.navigateToAddTask()
     }
+
+    // MARK: - Data Source
 
     func numberOfRows() -> Int {
         return tasks.count
@@ -40,6 +58,8 @@ final class TaskListPresenter: TaskListPresenterProtocol {
     func task(at index: Int) -> Task {
         return tasks[index]
     }
+
+    // MARK: - User Actions
 
     func didSelectTask(at index: Int) {
         let task = tasks[index]
@@ -50,19 +70,5 @@ final class TaskListPresenter: TaskListPresenterProtocol {
         tasks[index].isCompleted.toggle()
         interactor.updateTask(tasks[index])
         view?.updateTasks(tasks)
-    }
-
-    private func updateView() {
-        view?.updateTasks(tasks)
-    }
-
-    private func fetchTasks() {
-        print("Presenter: fetchTasks called")
-        interactor.fetchTasks { [weak self] fetchedTasks in
-            guard let self = self else { return }
-            print("Presenter: tasks fetched - \(fetchedTasks.count)")
-            self.tasks = fetchedTasks
-            self.updateView()
-        }
     }
 }

@@ -18,12 +18,11 @@ final class TaskListInteractor: TaskListInteractorProtocol {
     }
 
     func fetchTasks(completion: @escaping ([Task]) -> Void) {
-        print("Interactor: fetchTasks called")
-        networkManager.fetchTasks(from: "https://dummyjson.com/todos") { result in
-            DispatchQueue.main.async {
+        DispatchQueue.global(qos: .background).async {
+            print("Interactor: fetchTasks called")
+            self.networkManager.fetchTasks(from: "https://dummyjson.com/todos") { result in
                 switch result {
                 case .success(let temporaryTasks):
-                    print("Interactor: fetchTasks called")
                     let tasks = temporaryTasks.map { temporaryTask in
                         Task(
                             id: temporaryTask.id,
@@ -33,18 +32,25 @@ final class TaskListInteractor: TaskListInteractorProtocol {
                             isCompleted: temporaryTask.completed
                         )
                     }
-                    completion(tasks)
+                    DispatchQueue.main.async {
+                        print("Interactor: tasks fetched successfully")
+                        completion(tasks)
+                    }
                 case .failure(let error):
-                    print("Interactor: network error - \(error.localizedDescription)")
-                    completion([])
+                    DispatchQueue.main.async {
+                        print("Interactor: network error - \(error.localizedDescription)")
+                        completion([])
+                    }
                 }
             }
         }
     }
 
     func updateTask(_ task: Task) {
-        if let index = cachedTasks.firstIndex(where: { $0.id == task.id }) {
-            cachedTasks[index] = task
+        DispatchQueue.global(qos: .background).async {
+            if let index = self.cachedTasks.firstIndex(where: { $0.id == task.id }) {
+                self.cachedTasks[index] = task
+            }
         }
     }
 }
