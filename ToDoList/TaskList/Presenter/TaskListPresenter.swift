@@ -71,7 +71,6 @@ final class TaskListPresenter: TaskListPresenterProtocol {
     }
 
     func toggleTaskCompletion(at index: Int) {
-        print("Toggle task completion for index \(index)")
         tasks[index].isCompleted.toggle()
         taskUpdater.updateTask(tasks[index])
         let indexPath = IndexPath(row: index, section: 0)

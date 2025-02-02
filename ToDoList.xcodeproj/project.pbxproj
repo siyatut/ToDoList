@@ -30,6 +30,13 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		521496622D4FAD4900B37652 /* Exceptions for "ToDoList" folder in "ToDoListTests" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				CoreData/TaskModel.xcdatamodeld,
+			);
+			target = 528FE54A2D4B8F43009D4560 /* ToDoListTests */;
+		};
 		526FCD192D4F30DC00C8D626 /* Exceptions for "ToDoList" folder in "ToDoList" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
@@ -44,6 +51,7 @@
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
 				526FCD192D4F30DC00C8D626 /* Exceptions for "ToDoList" folder in "ToDoList" target */,
+				521496622D4FAD4900B37652 /* Exceptions for "ToDoList" folder in "ToDoListTests" target */,
 			);
 			path = ToDoList;
 			sourceTree = "<group>";
