@@ -19,7 +19,12 @@ final class TaskListRouter: TaskListRouterProtocol {
         let view = TaskListView()
         let interactor = TaskListInteractor()
         let router = TaskListRouter()
-        let presenter = TaskListPresenter(view: view, interactor: interactor, router: router)
+        let presenter = TaskListPresenter(
+            view: view,
+            interactor: interactor,
+            taskUpdater: interactor,
+            router: router
+        )
 
         view.presenter = presenter
         router.viewController = view

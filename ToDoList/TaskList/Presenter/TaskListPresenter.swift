@@ -13,6 +13,7 @@ final class TaskListPresenter: TaskListPresenterProtocol {
 
     weak var view: TaskListViewProtocol?
     private var interactor: TaskListInteractorProtocol
+    private var taskUpdater: TaskUpdating
     private var router: TaskListRouterProtocol
     private var tasks: [Task] = []
 
@@ -21,10 +22,12 @@ final class TaskListPresenter: TaskListPresenterProtocol {
     init(
         view: TaskListViewProtocol,
         interactor: TaskListInteractorProtocol,
+        taskUpdater: TaskUpdating,
         router: TaskListRouterProtocol
     ) {
         self.view = view
         self.interactor = interactor
+        self.taskUpdater = taskUpdater
         self.router = router
     }
 
@@ -72,7 +75,7 @@ final class TaskListPresenter: TaskListPresenterProtocol {
 
     func toggleTaskCompletion(at index: Int) {
         tasks[index].isCompleted.toggle()
-        interactor.updateTask(tasks[index])
+        taskUpdater.updateTask(tasks[index])
         view?.updateTasks(tasks)
     }
 }

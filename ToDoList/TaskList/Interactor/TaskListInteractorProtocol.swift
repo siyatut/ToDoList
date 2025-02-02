@@ -9,5 +9,4 @@ import UIKit
 
 protocol TaskListInteractorProtocol {
     func fetchTasks(completion: @escaping ([Task]) -> Void)
-    func updateTask(_ task: Task)
 }

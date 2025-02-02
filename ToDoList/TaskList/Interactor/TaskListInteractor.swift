@@ -7,7 +7,11 @@
 
 import UIKit
 
-final class TaskListInteractor: TaskListInteractorProtocol {
+protocol TaskUpdating {
+    func updateTask(_ task: Task)
+}
+
+final class TaskListInteractor: TaskListInteractorProtocol, TaskUpdating {
 
     // MARK: - Dependencies
 
