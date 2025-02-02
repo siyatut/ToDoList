@@ -33,7 +33,7 @@
 		528FE55D2D4B8F43009D4560 /* Exceptions for "ToDoList" folder in "ToDoList" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
-				Info.plist,
+				Resources/Info.plist,
 			);
 			target = 528FE5312D4B8F41009D4560 /* ToDoList */;
 		};
