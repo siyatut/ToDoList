@@ -29,15 +29,7 @@ final class TaskListInteractor: TaskListInteractorProtocol {
             self.networkManager.fetchTasks(from: "https://dummyjson.com/todos") { result in
                 switch result {
                 case .success(let temporaryTasks):
-                    let tasks = temporaryTasks.map { temporaryTask in
-                        Task(
-                            id: temporaryTask.id,
-                            title: temporaryTask.todo,
-                            description: "Задача от пользователя с ID \(temporaryTask.userId)",
-                            dateCreated: "01/01/2025",
-                            isCompleted: temporaryTask.completed
-                        )
-                    }
+                    let tasks = temporaryTasks.map(TaskMapper.map)
                     DispatchQueue.main.async {
                         print("Interactor: tasks fetched successfully")
                         completion(tasks)
