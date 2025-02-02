@@ -15,6 +15,9 @@ final class TaskListPresenter: TaskListPresenterProtocol {
     private var interactor: TaskListInteractorProtocol
     private var taskUpdater: TaskUpdating
     private var router: TaskListRouterProtocol
+
+    // MARK: - Properties
+
     private var tasks: [Task] = []
     private var filteredTasks: [Task] = []
     private var isSearching: Bool = false

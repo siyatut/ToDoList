@@ -11,6 +11,20 @@ extension TaskListView {
 
     // MARK: - UI setup
 
+    func setupView() {
+        setupNavigationBar()
+
+        setupContainerView()
+        setupmicrophoneButton()
+        setupSearchBar()
+
+        setupFooterView()
+        setupTaskCountLabel()
+        setupAddTaskButton()
+
+        setupTableView()
+    }
+
     func setupNavigationBar() {
         let titleLabel = UILabel()
         titleLabel.text = "Задачи"
@@ -21,7 +35,7 @@ extension TaskListView {
         navigationItem.leftBarButtonItem = titleItem
     }
 
-    func setupSearchView() {
+    func setupContainerView() {
         let customColor = UIColor(red: 39/255, green: 39/255, blue: 41/255, alpha: 1.0)
         searchContainerView.backgroundColor = customColor
         searchContainerView.layer.cornerRadius = 10
@@ -35,7 +49,9 @@ extension TaskListView {
             searchContainerView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
             searchContainerView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 10)
         ])
+    }
 
+    func setupmicrophoneButton() {
         let microphoneImage = UIImage(systemName: "mic.fill")
         microphoneButton.setImage(microphoneImage, for: .normal)
         microphoneButton.tintColor = .darkGray
@@ -50,7 +66,9 @@ extension TaskListView {
         ])
 
         microphoneButton.addTarget(self, action: #selector(didTapMicrophoneButton), for: .touchUpInside)
+    }
 
+    func setupSearchBar() {
         searchBar.searchBarStyle = .minimal
         searchBar.delegate = self
         searchBar.tintColor = .white
@@ -91,7 +109,7 @@ extension TaskListView {
         ])
     }
 
-    func setupFooter() {
+    func setupFooterView() {
         let customColor = UIColor(red: 39/255, green: 39/255, blue: 41/255, alpha: 1.0)
         taskFooterView.backgroundColor = customColor
         view.addSubview(taskFooterView)
@@ -106,6 +124,9 @@ extension TaskListView {
             taskFooterView.heightAnchor.constraint(equalToConstant: 83)
         ])
 
+    }
+
+    func setupTaskCountLabel() {
         taskCountLabel.font = UIFont.systemFont(ofSize: 11)
         taskCountLabel.textColor = .white
         updateTaskCountLabel()
@@ -116,7 +137,9 @@ extension TaskListView {
             taskCountLabel.topAnchor.constraint(equalTo: taskFooterView.topAnchor, constant: 20.5),
             taskCountLabel.bottomAnchor.constraint(equalTo: taskFooterView.bottomAnchor, constant: -49.5)
         ])
+    }
 
+    func setupAddTaskButton() {
         var config = UIButton.Configuration.plain()
         config.image = UIImage(systemName: "square.and.pencil")
         config.baseForegroundColor = .yellow

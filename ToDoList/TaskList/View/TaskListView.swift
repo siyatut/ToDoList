@@ -32,10 +32,7 @@ final class TaskListView: UIViewController, TaskListViewProtocol {
         presenter?.viewDidLoad()
 
         view.backgroundColor = .black
-        setupNavigationBar()
-        setupSearchView()
-        setupFooter()
-        setupTableView()
+        setupView()
     }
 
     // MARK: - Actions
