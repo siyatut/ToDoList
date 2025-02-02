@@ -16,6 +16,8 @@ final class TaskListPresenter: TaskListPresenterProtocol {
     private var taskUpdater: TaskUpdating
     private var router: TaskListRouterProtocol
     private var tasks: [Task] = []
+    private var filteredTasks: [Task] = []
+    private var isSearching: Bool = false
 
     // MARK: - Init
 
@@ -56,11 +58,11 @@ final class TaskListPresenter: TaskListPresenterProtocol {
     // MARK: - Data Source
 
     func numberOfRows() -> Int {
-        return tasks.count
+        return isSearching ? filteredTasks.count : tasks.count
     }
 
     func task(at index: Int) -> Task {
-        return tasks[index]
+        return isSearching ? filteredTasks[index] : tasks[index]
     }
 
     // MARK: - User actions
@@ -75,5 +77,26 @@ final class TaskListPresenter: TaskListPresenterProtocol {
         taskUpdater.updateTask(tasks[index])
         let indexPath = IndexPath(row: index, section: 0)
         view?.updateTask(at: indexPath)
+    }
+
+    // MARK: - Search on tasks
+
+    func searchTasks(with query: String) {
+        if query.isEmpty {
+            isSearching = false
+            view?.updateTasks(tasks)
+        } else {
+            isSearching = true
+            filteredTasks = tasks.filter { task in
+                task.title.lowercased().contains(query.lowercased()) ||
+                task.description.lowercased().contains(query.lowercased())
+            }
+            view?.updateTasks(filteredTasks)
+        }
+    }
+
+    func cancelSearch() {
+        isSearching = false
+        view?.updateTasks(tasks)
     }
 }

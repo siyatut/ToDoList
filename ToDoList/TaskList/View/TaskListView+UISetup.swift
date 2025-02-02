@@ -25,6 +25,7 @@ extension TaskListView {
         let customColor = UIColor(red: 39/255, green: 39/255, blue: 41/255, alpha: 1.0)
         searchContainerView.backgroundColor = customColor
         searchContainerView.layer.cornerRadius = 10
+        searchContainerView.clipsToBounds = true
         view.addSubview(searchContainerView)
 
         searchContainerView.translatesAutoresizingMaskIntoConstraints = false
@@ -33,29 +34,6 @@ extension TaskListView {
             searchContainerView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
             searchContainerView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
             searchContainerView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 10)
-        ])
-
-        searchImageView.image = UIImage(systemName: "magnifyingglass")
-        searchImageView.tintColor = .darkGray
-        searchContainerView.addSubview(searchImageView)
-
-        searchImageView.translatesAutoresizingMaskIntoConstraints = false
-        NSLayoutConstraint.activate([
-            searchImageView.leadingAnchor.constraint(equalTo: searchContainerView.leadingAnchor, constant: 6),
-            searchImageView.centerYAnchor.constraint(equalTo: searchContainerView.centerYAnchor),
-            searchImageView.widthAnchor.constraint(equalToConstant: 20),
-            searchImageView.heightAnchor.constraint(equalToConstant: 20)
-        ])
-
-        searchLabel.text = "Search"
-        searchLabel.font = UIFont.systemFont(ofSize: 17)
-        searchLabel.textColor = .darkGray
-        searchContainerView.addSubview(searchLabel)
-
-        searchLabel.translatesAutoresizingMaskIntoConstraints = false
-        NSLayoutConstraint.activate([
-            searchLabel.leadingAnchor.constraint(equalTo: searchImageView.trailingAnchor, constant: 3),
-            searchLabel.centerYAnchor.constraint(equalTo: searchContainerView.centerYAnchor)
         ])
 
         let microphoneImage = UIImage(systemName: "mic.fill")
@@ -72,6 +50,27 @@ extension TaskListView {
         ])
 
         microphoneButton.addTarget(self, action: #selector(didTapMicrophoneButton), for: .touchUpInside)
+
+        searchBar.searchBarStyle = .minimal
+        searchBar.delegate = self
+        searchBar.tintColor = .white
+        searchBar.backgroundImage = UIImage()
+        searchBar.searchTextField.backgroundColor = .clear
+        searchBar.searchTextField.borderStyle = .none
+
+        searchBar.searchTextField.leftView?.tintColor = .darkGray
+        searchBar.searchTextField.attributedPlaceholder = NSAttributedString(
+            string: "Search",
+            attributes: [NSAttributedString.Key.foregroundColor: UIColor.darkGray]
+        )
+        searchContainerView.addSubview(searchBar)
+
+        searchBar.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            searchBar.leadingAnchor.constraint(equalTo: searchContainerView.leadingAnchor),
+            searchBar.trailingAnchor.constraint(equalTo: searchContainerView.trailingAnchor),
+            searchBar.centerYAnchor.constraint(equalTo: searchContainerView.centerYAnchor)
+        ])
     }
 
     func setupTableView() {
@@ -85,7 +84,7 @@ extension TaskListView {
         view.addSubview(tableView)
         tableView.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
-            tableView.topAnchor.constraint(equalTo: searchContainerView.bottomAnchor, constant: 26),
+            tableView.topAnchor.constraint(equalTo: searchContainerView.bottomAnchor, constant: 16),
             tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             tableView.bottomAnchor.constraint(equalTo: taskFooterView.topAnchor)

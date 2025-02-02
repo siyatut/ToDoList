@@ -22,8 +22,7 @@ final class TaskListView: UIViewController, TaskListViewProtocol {
     let addTaskButton = UIButton()
 
     let searchContainerView = UIView()
-    let searchImageView = UIImageView()
-    let searchLabel = UILabel()
+    let searchBar = UISearchBar()
     let microphoneButton = UIButton()
 
     // MARK: - Lifecycle

@@ -14,4 +14,6 @@ protocol TaskListPresenterProtocol: AnyObject {
     func task(at index: Int) -> Task
     func didSelectTask(at index: Int)
     func toggleTaskCompletion(at index: Int)
+    func searchTasks(with query: String)
+    func cancelSearch()
 }
