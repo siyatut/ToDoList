@@ -21,6 +21,11 @@ final class TaskListView: UIViewController, TaskListViewProtocol {
     let taskCountLabel = UILabel()
     let addTaskButton = UIButton()
 
+    let searchContainerView = UIView()
+    let searchImageView = UIImageView()
+    let searchLabel = UILabel()
+    let microphoneButton = UIButton()
+
     // MARK: - Lifecycle
 
     override func viewDidLoad() {
@@ -29,6 +34,7 @@ final class TaskListView: UIViewController, TaskListViewProtocol {
 
         view.backgroundColor = .black
         setupNavigationBar()
+        setupSearchView()
         setupFooter()
         setupTableView()
     }
@@ -37,6 +43,11 @@ final class TaskListView: UIViewController, TaskListViewProtocol {
 
     @objc func addTaskTapped() {
         presenter?.didTapAddTask()
+    }
+
+    @objc func didTapMicrophoneButton() {
+        print("Микрофон нажат: вызов голосового помощника")
+        // Надо ещё настроить отработку нажатия через presenter
     }
 
     // MARK: - UI updates
