@@ -45,8 +45,9 @@ extension TaskListView {
         searchContainerView.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
             searchContainerView.heightAnchor.constraint(equalToConstant: 36),
-            searchContainerView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
-            searchContainerView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
+            searchContainerView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 20),
+            searchContainerView.trailingAnchor.constraint(
+                equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -20),
             searchContainerView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 10)
         ])
     }
@@ -76,6 +77,11 @@ extension TaskListView {
         searchBar.searchTextField.backgroundColor = .clear
         searchBar.searchTextField.borderStyle = .none
 
+        searchBar.searchTextField.leftViewMode = .always
+        searchBar.searchTextField.leftView?.frame = CGRect(x: 0, y: 0, width: 24, height: 24)
+
+        searchBar.searchTextField.layer.sublayerTransform = CATransform3DMakeTranslation(-6, 0, 0)
+
         searchBar.searchTextField.leftView?.tintColor = .darkGray
         searchBar.searchTextField.attributedPlaceholder = NSAttributedString(
             string: "Search",
@@ -86,7 +92,7 @@ extension TaskListView {
         searchBar.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
             searchBar.leadingAnchor.constraint(equalTo: searchContainerView.leadingAnchor),
-            searchBar.trailingAnchor.constraint(equalTo: searchContainerView.trailingAnchor),
+            searchBar.trailingAnchor.constraint(equalTo: microphoneButton.leadingAnchor, constant: -8),
             searchBar.centerYAnchor.constraint(equalTo: searchContainerView.centerYAnchor)
         ])
     }
@@ -103,8 +109,8 @@ extension TaskListView {
         tableView.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
             tableView.topAnchor.constraint(equalTo: searchContainerView.bottomAnchor, constant: 16),
-            tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            tableView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
+            tableView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
             tableView.bottomAnchor.constraint(equalTo: taskFooterView.topAnchor)
         ])
     }
