@@ -29,18 +29,15 @@ final class TaskListInteractor: TaskListInteractorProtocol, TaskUpdating {
 
     func fetchTasks(completion: @escaping ([Task]) -> Void) {
         DispatchQueue.global(qos: .background).async {
-            print("Interactor: fetchTasks called")
             self.networkManager.fetchTasks(from: "https://dummyjson.com/todos") { result in
                 switch result {
                 case .success(let temporaryTasks):
                     let tasks = temporaryTasks.map(TaskMapper.map)
                     DispatchQueue.main.async {
-                        print("Interactor: tasks fetched successfully")
                         completion(tasks)
                     }
-                case .failure(let error):
+                case .failure:
                     DispatchQueue.main.async {
-                        print("Interactor: network error - \(error.localizedDescription)")
                         completion([])
                     }
                 }

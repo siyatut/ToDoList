@@ -123,16 +123,16 @@ final class TaskCell: UITableViewCell {
         descriptionLabel.text = task.description
         dateLabel.text = task.dateCreated
 
-        let textColor: UIColor = isCompleted ? .darkGray : .white
+        let textColor: UIColor = task.isCompleted ? .darkGray : .white
         let titleAttributes: [NSAttributedString.Key: Any] = [
             .foregroundColor: textColor,
-            .strikethroughStyle: isCompleted ? NSUnderlineStyle.single.rawValue : 0
+            .strikethroughStyle: task.isCompleted ? NSUnderlineStyle.single.rawValue : 0
         ]
         titleLabel.attributedText = NSAttributedString(string: task.title, attributes: titleAttributes)
         descriptionLabel.attributedText = NSAttributedString(string: task.description, attributes: titleAttributes)
 
-        let imageName = isCompleted ? "checkmark.circle" : "circle"
+        let imageName = task.isCompleted ? "checkmark.circle" : "circle"
         checkmarkButton.setImage(UIImage(systemName: imageName), for: .normal)
-        checkmarkButton.tintColor = isCompleted ? .systemYellow : .darkGray
+        checkmarkButton.tintColor = task.isCompleted ? .systemYellow : .darkGray
     }
 }

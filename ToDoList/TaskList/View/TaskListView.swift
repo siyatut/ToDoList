@@ -26,7 +26,6 @@ final class TaskListView: UIViewController, TaskListViewProtocol {
     override func viewDidLoad() {
         super.viewDidLoad()
         presenter?.viewDidLoad()
-        print("View: viewDidLoad called")
 
         view.backgroundColor = .black
         setupNavigationBar()
@@ -134,10 +133,13 @@ final class TaskListView: UIViewController, TaskListViewProtocol {
         }
     }
 
+    func updateTask(at indexPath: IndexPath) {
+        tableView.reloadRows(at: [indexPath], with: .automatic)
+    }
+
     func updateTasks(_ tasks: [Task]) {
         self.tasks = tasks
         updateTaskCountLabel()
-        print("View получила задачи: \(tasks.count)")
         DispatchQueue.main.async {
             self.tableView.reloadData()
         }

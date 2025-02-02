@@ -34,17 +34,14 @@ final class TaskListPresenter: TaskListPresenterProtocol {
     // MARK: - Lifecycle
 
     func viewDidLoad() {
-        print("Presenter: viewDidLoad called")
         fetchTasks()
     }
 
     // MARK: - Task loading
 
     private func fetchTasks() {
-        print("Presenter: fetchTasks called")
         interactor.fetchTasks { [weak self] fetchedTasks in
             guard let self = self else { return }
-            print("Presenter: tasks fetched - \(fetchedTasks.count)")
             self.tasks = fetchedTasks
             self.view?.updateTasks(fetchedTasks)
         }
@@ -74,8 +71,10 @@ final class TaskListPresenter: TaskListPresenterProtocol {
     }
 
     func toggleTaskCompletion(at index: Int) {
+        print("Toggle task completion for index \(index)")
         tasks[index].isCompleted.toggle()
         taskUpdater.updateTask(tasks[index])
-        view?.updateTasks(tasks)
+        let indexPath = IndexPath(row: index, section: 0)
+        view?.updateTask(at: indexPath)
     }
 }

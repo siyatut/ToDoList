@@ -13,7 +13,7 @@ final class TaskMapper {
             id: temporaryTask.id,
             title: temporaryTask.todo,
             description: "Задача от пользователя с ID \(temporaryTask.userId)",
-            dateCreated: "01/01/2025",
+            dateCreated: "02/10/2024",
             isCompleted: temporaryTask.completed
         )
     }
