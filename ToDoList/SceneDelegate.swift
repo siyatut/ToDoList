@@ -18,13 +18,17 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     ) {
         guard let windowScene = (scene as? UIWindowScene) else { return }
 
-        let window = UIWindow(windowScene: windowScene)
-        let taskListView = TaskListView()
-        let navigationController = UINavigationController(rootViewController: TaskListRouter.createModule())
-        window.rootViewController = navigationController
-        window.makeKeyAndVisible()
+            let window = UIWindow(windowScene: windowScene)
+            let rootViewController = setupRootViewController()
+            window.rootViewController = rootViewController
+            window.makeKeyAndVisible()
 
-        self.window = window
+            self.window = window
+    }
+
+    private func setupRootViewController() -> UINavigationController {
+        let taskListModule = TaskListRouter.createModule()
+        return UINavigationController(rootViewController: taskListModule)
     }
 
     func sceneDidDisconnect(_ scene: UIScene) {
