@@ -76,25 +76,42 @@ final class TaskListPresenter: TaskListPresenterProtocol {
     }
 
     func toggleTaskCompletion(at index: Int) {
-        tasks[index].isCompleted.toggle()
-        taskUpdater.updateTask(tasks[index])
-        let indexPath = IndexPath(row: index, section: 0)
-        view?.updateTask(at: indexPath)
+        if isSearching {
+            filteredTasks[index].isCompleted.toggle()
+            if let originalIndex = tasks.firstIndex(where: { $0.id == filteredTasks[index].id }) {
+                tasks[originalIndex].isCompleted.toggle()
+            }
+            view?.updateTasks(filteredTasks)
+        } else {
+            tasks[index].isCompleted.toggle()
+            view?.updateTask(at: IndexPath(row: index, section: 0))
+        }
+        taskUpdater.updateTask(isSearching ? filteredTasks[index] : tasks[index])
     }
 
     // MARK: - Search on tasks
 
     func searchTasks(with query: String) {
-        if query.isEmpty {
+        guard !query.isEmpty else {
             isSearching = false
             view?.updateTasks(tasks)
-        } else {
-            isSearching = true
-            filteredTasks = tasks.filter { task in
+            return
+        }
+        
+        isSearching = true
+        
+        DispatchQueue.global(qos: .userInitiated).async { [weak self] in
+            guard let self = self else { return }
+            
+            let filteredTasks = self.tasks.filter { task in
                 task.title.lowercased().contains(query.lowercased()) ||
                 task.description.lowercased().contains(query.lowercased())
             }
-            view?.updateTasks(filteredTasks)
+            
+            DispatchQueue.main.async {
+                self.filteredTasks = filteredTasks
+                self.view?.updateTasks(filteredTasks)
+            }
         }
     }
 
