@@ -137,9 +137,13 @@ final class TaskListPresenter: TaskListPresenterProtocol {
     }
 
     func didSelectDeleteTask(at index: Int) {
-        let task = isSearching ? filteredTasks[index] : tasks[index]
-        tasks.removeAll { $0.id == task.id }
-        filteredTasks.removeAll { $0.id == task.id }
+        let taskToDelete = isSearching ? filteredTasks[index] : tasks[index]
+        interactor.deleteTask(taskToDelete)
+
+        tasks.removeAll { $0.id == taskToDelete.id }
+        filteredTasks.removeAll { $0.id == taskToDelete.id }
+
+        view?.resetHighlightForCell(at: IndexPath(row: index, section: 0))
         view?.updateTasks(isSearching ? filteredTasks : tasks)
     }
 }

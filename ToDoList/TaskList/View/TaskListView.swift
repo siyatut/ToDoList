@@ -89,4 +89,11 @@ final class TaskListView: UIViewController, TaskListViewProtocol {
             self.tableView.reloadData()
         }
     }
+
+    func resetHighlightForCell(at indexPath: IndexPath) {
+        if let cell = tableView.cellForRow(at: indexPath) as? TaskCell {
+            cell.setMenuHighlight(false)
+        }
+    }
+
 }

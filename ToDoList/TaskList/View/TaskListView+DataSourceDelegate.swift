@@ -73,9 +73,8 @@ extension TaskListView: UITableViewDataSource, UITableViewDelegate {
         animator: UIContextMenuInteractionAnimating?
     ) {
         animator?.addCompletion {
-            if let indexPath = self.selectedIndexPath,
-               let cell = tableView.cellForRow(at: indexPath) as? TaskCell {
-                cell.setMenuHighlight(false)
+            if let indexPath = self.selectedIndexPath {
+                self.resetHighlightForCell(at: indexPath)
             }
             self.selectedIndexPath = nil
         }

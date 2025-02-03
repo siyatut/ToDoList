@@ -31,9 +31,11 @@ final class TaskListInteractor: TaskListInteractorProtocol, TaskUpdating {
     func fetchTasks(completion: @escaping ([Task]) -> Void) {
         let cachedTasks = fetchTasksFromCoreData()
         if !cachedTasks.isEmpty {
+            print("Using cached tasks from Core Data")
             self.cachedTasks = cachedTasks
             completion(cachedTasks)
         } else {
+            print("Core Data is empty, fetching tasks from URL")
             DispatchQueue.global(qos: .background).async {
                 self.networkManager.fetchTasks(from: self.urlString) { result in
                     switch result {
@@ -44,7 +46,8 @@ final class TaskListInteractor: TaskListInteractorProtocol, TaskUpdating {
                         DispatchQueue.main.async {
                             completion(tasks)
                         }
-                    case .failure:
+                    case .failure(let error):
+                        print("Failed to fetch tasks: \(error.localizedDescription)")
                         DispatchQueue.main.async {
                             completion([])
                         }
@@ -83,10 +86,33 @@ final class TaskListInteractor: TaskListInteractorProtocol, TaskUpdating {
             self.cachedTasks[index] = task
         }
     }
+    
+    // MARK: - Fetch tasks from Core Data
 
+    private func fetchTasksFromCoreData() -> [Task] {
+        let context = CoreDataManager.shared.context
+        let fetchRequest: NSFetchRequest<TaskEntity> = TaskEntity.fetchRequest()
+
+        do {
+            let taskEntities = try context.fetch(fetchRequest)
+            return taskEntities.map { taskEntity in
+                Task(
+                    id: Int(taskEntity.id),
+                    title: taskEntity.title ?? "",
+                    description: taskEntity.descriptionText ?? "",
+                    dateCreated: taskEntity.dateCreated ?? "",
+                    isCompleted: taskEntity.isCompleted
+                )
+            }
+        } catch {
+            print("Failed to fetch tasks from Core Data: \(error)")
+            return []
+        }
+    }
+    
     // MARK: - Save tasks to Core Data
 
-    func saveTasksToCoreData(tasks: [Task]) {
+    private func saveTasksToCoreData(tasks: [Task]) {
         let context = CoreDataManager.shared.context
         context.perform {
             tasks.forEach { task in
@@ -121,26 +147,22 @@ final class TaskListInteractor: TaskListInteractorProtocol, TaskUpdating {
         }
     }
 
-    // MARK: - Fetch tasks from Core Data
+    // MARK: - Delete task from Core Data
 
-    func fetchTasksFromCoreData() -> [Task] {
+    func deleteTask(_ task: Task) {
         let context = CoreDataManager.shared.context
         let fetchRequest: NSFetchRequest<TaskEntity> = TaskEntity.fetchRequest()
+        fetchRequest.predicate = NSPredicate(format: "id == %d", task.id)
 
         do {
-            let taskEntities = try context.fetch(fetchRequest)
-            return taskEntities.map { taskEntity in
-                Task(
-                    id: Int(taskEntity.id),
-                    title: taskEntity.title ?? "",
-                    description: taskEntity.descriptionText ?? "",
-                    dateCreated: taskEntity.dateCreated ?? "",
-                    isCompleted: taskEntity.isCompleted
-                )
+            let results = try context.fetch(fetchRequest)
+            if let taskEntity = results.first {
+                context.delete(taskEntity)
+                CoreDataManager.shared.saveContext()
+                print("Task deleted from Core Data: \(task.title)")
             }
         } catch {
-            print("Failed to fetch tasks from Core Data: \(error)")
-            return []
+            print("Failed to delete task from Core Data: \(error.localizedDescription)")
         }
     }
 }
