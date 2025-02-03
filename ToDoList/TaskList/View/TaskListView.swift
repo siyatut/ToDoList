@@ -91,10 +91,23 @@ final class TaskListView: UIViewController, TaskListViewProtocol {
         }
     }
 
+    func deleteTask(at indexPath: IndexPath) {
+        guard indexPath.row < tasks.count else { return }
+
+        tableView.performBatchUpdates {
+            self.tasks.remove(at: indexPath.row)
+            self.tableView.deleteRows(
+                at: [indexPath],
+                with: .automatic
+            )
+        } completion: { _ in
+            self.updateTaskCountLabel()
+        }
+    }
+
     func resetHighlightForCell(at indexPath: IndexPath) {
         if let cell = tableView.cellForRow(at: indexPath) as? TaskCell {
             cell.setMenuHighlight(false)
         }
     }
-
 }

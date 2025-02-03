@@ -140,10 +140,18 @@ final class TaskListPresenter: TaskListPresenterProtocol {
         let taskToDelete = isSearching ? filteredTasks[index] : tasks[index]
         interactor.deleteTask(taskToDelete)
 
-        tasks.removeAll { $0.id == taskToDelete.id }
-        filteredTasks.removeAll { $0.id == taskToDelete.id }
-
         view?.resetHighlightForCell(at: IndexPath(row: index, section: 0))
-        view?.updateTasks(isSearching ? filteredTasks : tasks)
+
+        if isSearching {
+            if let originalIndex = tasks.firstIndex(where: { $0.id == taskToDelete.id }) {
+                tasks.remove(at: originalIndex)
+            }
+            filteredTasks.remove(at: index)
+        } else {
+            tasks.remove(at: index)
+        }
+
+        view?.deleteTask(at: IndexPath(row: index, section: 0))
     }
+
 }
