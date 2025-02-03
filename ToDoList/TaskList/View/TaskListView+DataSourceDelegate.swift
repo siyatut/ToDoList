@@ -32,6 +32,6 @@ extension TaskListView: UITableViewDataSource, UITableViewDelegate {
     }
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        presenter?.toggleTaskCompletion(at: indexPath.row)
+
     }
 }

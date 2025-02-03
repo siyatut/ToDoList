@@ -97,17 +97,17 @@ final class TaskListPresenter: TaskListPresenterProtocol {
             view?.updateTasks(tasks)
             return
         }
-        
+    
         isSearching = true
-        
+
         DispatchQueue.global(qos: .userInitiated).async { [weak self] in
             guard let self = self else { return }
-            
+
             let filteredTasks = self.tasks.filter { task in
                 task.title.lowercased().contains(query.lowercased()) ||
                 task.description.lowercased().contains(query.lowercased())
             }
-            
+
             DispatchQueue.main.async {
                 self.filteredTasks = filteredTasks
                 self.view?.updateTasks(filteredTasks)
