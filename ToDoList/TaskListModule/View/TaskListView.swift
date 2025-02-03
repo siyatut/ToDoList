@@ -34,6 +34,10 @@ final class TaskListView: UIViewController, TaskListViewProtocol {
         updateTaskCountLabel()
         view.backgroundColor = .black
         setupView()
+
+        let backButton = UIBarButtonItem()
+        backButton.title = "Назад"
+        navigationItem.backBarButtonItem = backButton
     }
 
     // MARK: - Actions

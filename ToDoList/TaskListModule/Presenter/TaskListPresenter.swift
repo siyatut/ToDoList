@@ -58,6 +58,11 @@ final class TaskListPresenter: TaskListPresenterProtocol {
         router.navigateToAddTask()
     }
 
+    func didSelectTask(at index: Int) {
+        let task = isSearching ? filteredTasks[index] : tasks[index]
+        router.navigateToEditTask(task: task)
+    }
+
     // MARK: - Data Source
 
     func numberOfRows() -> Int {
@@ -69,11 +74,6 @@ final class TaskListPresenter: TaskListPresenterProtocol {
     }
 
     // MARK: - User actions
-
-    func didSelectTask(at index: Int) {
-        let task = tasks[index]
-        router.navigateToEditTask(task: task)
-    }
 
     func toggleTaskCompletion(at index: Int) {
         if isSearching {

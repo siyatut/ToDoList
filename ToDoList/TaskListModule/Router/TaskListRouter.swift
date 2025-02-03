@@ -35,10 +35,12 @@ final class TaskListRouter: TaskListRouterProtocol {
     // MARK: - Navigation
 
     func navigateToAddTask() {
-        print("Navigate to Add Task screen")
+        let taskEditView = TaskEditRouter.createModule(with: nil)
+        viewController?.navigationController?.pushViewController(taskEditView, animated: true)
     }
 
     func navigateToEditTask(task: Task) {
-        print("Navigate to Edit Task: \(task.title)")
+        let taskEditView = TaskEditRouter.createModule(with: task)
+        viewController?.navigationController?.pushViewController(taskEditView, animated: true)
     }
 }

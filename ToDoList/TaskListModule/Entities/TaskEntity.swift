@@ -20,8 +20,9 @@ struct TemporaryTask: Decodable {
 
 struct Task: Decodable {
     let id: Int
-    let title: String
-    let description: String
-    let dateCreated: String
+    var title: String
+    var description: String
+    var dateCreated: String
+    var dateUpdated: String?
     var isCompleted: Bool
 }

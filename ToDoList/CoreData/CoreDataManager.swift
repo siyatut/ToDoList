@@ -17,7 +17,11 @@ final class CoreDataManager {
 
     private init() {}
 
-    // MARK: - Persistent container
+    // MARK: - Core Data Stack
+
+    var context: NSManagedObjectContext {
+        return persistentContainer.viewContext
+    }
 
     lazy var persistentContainer: NSPersistentContainer = {
         let container = NSPersistentContainer(name: "TaskModel")
@@ -29,14 +33,6 @@ final class CoreDataManager {
         return container
     }()
 
-    // MARK: - Managed object context
-
-    var context: NSManagedObjectContext {
-        return persistentContainer.viewContext
-    }
-
-    // MARK: - Save context
-
     func saveContext() {
         if context.hasChanges {
             do {
@@ -47,6 +43,34 @@ final class CoreDataManager {
             }
         } else {
             print("No changes to save in context")
+        }
+    }
+
+    // MARK: - Task Management
+
+    func saveTask(_ task: Task) {
+        let taskEntity = TaskEntity(context: context)
+        taskEntity.id = Int64(task.id)
+        taskEntity.title = task.title
+        taskEntity.descriptionText = task.description
+        taskEntity.dateCreated = task.dateCreated
+        taskEntity.isCompleted = task.isCompleted
+        saveContext()
+    }
+
+    func updateTask(_ task: Task) {
+        let fetchRequest: NSFetchRequest<TaskEntity> = TaskEntity.fetchRequest()
+        fetchRequest.predicate = NSPredicate(format: "id == %d", task.id)
+
+        do {
+            if let taskEntity = try context.fetch(fetchRequest).first {
+                taskEntity.title = task.title
+                taskEntity.descriptionText = task.description
+                taskEntity.isCompleted = task.isCompleted
+                saveContext()
+            }
+        } catch {
+            print("Failed to update task: \(error)")
         }
     }
 }
