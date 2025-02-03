@@ -89,6 +89,10 @@ final class TaskListPresenter: TaskListPresenterProtocol {
         taskUpdater.updateTask(isSearching ? filteredTasks[index] : tasks[index])
     }
 
+    func didTapMicrophone() {
+        print("Presenter: вызов голосового помощника")
+    }
+
     // MARK: - Search on tasks
 
     func searchTasks(with query: String) {
@@ -97,7 +101,7 @@ final class TaskListPresenter: TaskListPresenterProtocol {
             view?.updateTasks(tasks)
             return
         }
-    
+
         isSearching = true
 
         DispatchQueue.global(qos: .userInitiated).async { [weak self] in

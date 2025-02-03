@@ -42,8 +42,7 @@ final class TaskListView: UIViewController, TaskListViewProtocol {
     }
 
     @objc func didTapMicrophoneButton() {
-        print("Микрофон нажат: вызов голосового помощника")
-        // Надо ещё настроить отработку нажатия через presenter
+        presenter?.didTapMicrophone()
     }
 
     @objc func dismissKeyboard() {
