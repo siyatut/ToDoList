@@ -31,6 +31,7 @@ final class TaskListView: UIViewController, TaskListViewProtocol {
     override func viewDidLoad() {
         super.viewDidLoad()
         presenter?.viewDidLoad()
+        updateTaskCountLabel()
         view.backgroundColor = .black
         setupView()
     }
@@ -59,7 +60,7 @@ final class TaskListView: UIViewController, TaskListViewProtocol {
 
     // MARK: - UI updates
 
-    func updateTaskCountLabel() {
+    private func updateTaskCountLabel() {
         let taskCount = tasks.count
         let taskWord: String
 

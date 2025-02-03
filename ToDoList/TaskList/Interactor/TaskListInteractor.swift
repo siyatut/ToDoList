@@ -86,7 +86,7 @@ final class TaskListInteractor: TaskListInteractorProtocol, TaskUpdating {
             self.cachedTasks[index] = task
         }
     }
-    
+
     // MARK: - Fetch tasks from Core Data
 
     private func fetchTasksFromCoreData() -> [Task] {
@@ -109,7 +109,7 @@ final class TaskListInteractor: TaskListInteractorProtocol, TaskUpdating {
             return []
         }
     }
-    
+
     // MARK: - Save tasks to Core Data
 
     private func saveTasksToCoreData(tasks: [Task]) {

@@ -138,7 +138,6 @@ extension TaskListView {
     func setupTaskCountLabel() {
         taskCountLabel.font = UIFont.systemFont(ofSize: 11)
         taskCountLabel.textColor = .white
-        updateTaskCountLabel()
 
         taskCountLabel.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
