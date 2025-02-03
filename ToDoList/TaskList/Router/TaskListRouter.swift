@@ -38,7 +38,7 @@ final class TaskListRouter: TaskListRouterProtocol {
         print("Navigate to Add Task screen")
     }
 
-    func navigateToTaskDetail(task: Task) {
-        print("Navigate to Task Detail screen for: \(task.title)")
+    func navigateToEditTask(task: Task) {
+        print("Navigate to Edit Task: \(task.title)")
     }
 }

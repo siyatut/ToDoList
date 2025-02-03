@@ -72,7 +72,7 @@ final class TaskListPresenter: TaskListPresenterProtocol {
 
     func didSelectTask(at index: Int) {
         let task = tasks[index]
-        router.navigateToTaskDetail(task: task)
+        router.navigateToEditTask(task: task)
     }
 
     func toggleTaskCompletion(at index: Int) {
@@ -122,5 +122,24 @@ final class TaskListPresenter: TaskListPresenterProtocol {
     func cancelSearch() {
         isSearching = false
         view?.updateTasks(tasks)
+    }
+
+    // MARK: - Long press menu handling
+
+    func didSelectEditTask(at index: Int) {
+        let task = isSearching ? filteredTasks[index] : tasks[index]
+        router.navigateToEditTask(task: task)
+    }
+
+    func didSelectShareTask(at index: Int) {
+        let task = isSearching ? filteredTasks[index] : tasks[index]
+        view?.showShareSheet(for: task)
+    }
+
+    func didSelectDeleteTask(at index: Int) {
+        let task = isSearching ? filteredTasks[index] : tasks[index]
+        tasks.removeAll { $0.id == task.id }
+        filteredTasks.removeAll { $0.id == task.id }
+        view?.updateTasks(isSearching ? filteredTasks : tasks)
     }
 }

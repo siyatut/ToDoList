@@ -31,6 +31,34 @@ extension TaskListView: UITableViewDataSource, UITableViewDelegate {
         return cell
     }
 
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+    func tableView(
+        _ tableView: UITableView,
+        contextMenuConfigurationForRowAt indexPath: IndexPath,
+        point: CGPoint
+    ) -> UIContextMenuConfiguration? {
+        let index = indexPath.row
+
+        return UIContextMenuConfiguration(identifier: nil, previewProvider: nil) { _ in
+            let editAction = UIAction(
+                title: "Редактировать",
+                image: UIImage(systemName: "square.and.pencil")) { _ in
+                self.presenter?.didSelectEditTask(at: index)
+            }
+
+            let shareAction = UIAction(
+                title: "Поделиться",
+                image: UIImage(systemName: "square.and.arrow.up")) { _ in
+                self.presenter?.didSelectShareTask(at: index)
+            }
+
+            let deleteAction = UIAction(
+                title: "Удалить",
+                image: UIImage(systemName: "trash"),
+                attributes: .destructive) { _ in
+                self.presenter?.didSelectDeleteTask(at: index)
+            }
+
+            return UIMenu(title: "", children: [editAction, shareAction, deleteAction])
+        }
     }
 }

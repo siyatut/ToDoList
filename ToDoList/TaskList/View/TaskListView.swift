@@ -30,7 +30,6 @@ final class TaskListView: UIViewController, TaskListViewProtocol {
     override func viewDidLoad() {
         super.viewDidLoad()
         presenter?.viewDidLoad()
-
         view.backgroundColor = .black
         setupView()
     }
@@ -47,6 +46,14 @@ final class TaskListView: UIViewController, TaskListViewProtocol {
 
     @objc func dismissKeyboard() {
         view.endEditing(true)
+    }
+
+    func showShareSheet(for task: Task) {
+        let activityController = UIActivityViewController(
+            activityItems: [task.title],
+            applicationActivities: nil
+        )
+        present(activityController, animated: true)
     }
 
     // MARK: - UI updates

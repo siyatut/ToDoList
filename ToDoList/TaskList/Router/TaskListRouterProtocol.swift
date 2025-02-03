@@ -9,5 +9,5 @@ import UIKit
 
 protocol TaskListRouterProtocol {
     func navigateToAddTask()
-    func navigateToTaskDetail(task: Task)
+    func navigateToEditTask(task: Task)
 }
