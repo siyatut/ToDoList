@@ -102,7 +102,8 @@ extension TaskListView {
     func setupTableView() {
         tableView.backgroundColor = .black
         tableView.separatorStyle = .singleLine
-        tableView.separatorColor = .gray
+        let customColor = UIColor(red: 39/255, green: 39/255, blue: 41/255, alpha: 1.0)
+        tableView.separatorColor = customColor
         tableView.register(TaskCell.self, forCellReuseIdentifier: TaskCell.identifier)
         tableView.dataSource = self
         tableView.delegate = self

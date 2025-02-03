@@ -13,6 +13,7 @@ final class TaskListView: UIViewController, TaskListViewProtocol {
 
     private var tasks: [Task] = []
     var presenter: TaskListPresenterProtocol?
+    var selectedIndexPath: IndexPath?
 
     // MARK: - UI components
 

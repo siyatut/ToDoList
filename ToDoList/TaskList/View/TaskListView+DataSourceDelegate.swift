@@ -36,29 +36,48 @@ extension TaskListView: UITableViewDataSource, UITableViewDelegate {
         contextMenuConfigurationForRowAt indexPath: IndexPath,
         point: CGPoint
     ) -> UIContextMenuConfiguration? {
-        let index = indexPath.row
+        guard let cell = tableView.cellForRow(at: indexPath) as? TaskCell else {
+            return nil
+        }
+
+        selectedIndexPath = indexPath
+        cell.setMenuHighlight(true)
 
         return UIContextMenuConfiguration(identifier: nil, previewProvider: nil) { _ in
             let editAction = UIAction(
                 title: "Редактировать",
                 image: UIImage(systemName: "square.and.pencil")) { _ in
-                self.presenter?.didSelectEditTask(at: index)
-            }
+                    self.presenter?.didSelectEditTask(at: indexPath.row)
+                }
 
             let shareAction = UIAction(
                 title: "Поделиться",
                 image: UIImage(systemName: "square.and.arrow.up")) { _ in
-                self.presenter?.didSelectShareTask(at: index)
-            }
+                    self.presenter?.didSelectShareTask(at: indexPath.row)
+                }
 
             let deleteAction = UIAction(
                 title: "Удалить",
                 image: UIImage(systemName: "trash"),
                 attributes: .destructive) { _ in
-                self.presenter?.didSelectDeleteTask(at: index)
-            }
+                    self.presenter?.didSelectDeleteTask(at: indexPath.row)
+                }
 
             return UIMenu(title: "", children: [editAction, shareAction, deleteAction])
+        }
+    }
+
+    func tableView(
+        _ tableView: UITableView,
+        willEndContextMenuInteraction configuration: UIContextMenuConfiguration,
+        animator: UIContextMenuInteractionAnimating?
+    ) {
+        animator?.addCompletion {
+            if let indexPath = self.selectedIndexPath,
+               let cell = tableView.cellForRow(at: indexPath) as? TaskCell {
+                cell.setMenuHighlight(false)
+            }
+            self.selectedIndexPath = nil
         }
     }
 }
