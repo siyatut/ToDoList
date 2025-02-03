@@ -46,6 +46,10 @@ final class TaskListView: UIViewController, TaskListViewProtocol {
         // Надо ещё настроить отработку нажатия через presenter
     }
 
+    @objc func dismissKeyboard() {
+        view.endEditing(true)
+    }
+
     // MARK: - UI updates
 
     func updateTaskCountLabel() {

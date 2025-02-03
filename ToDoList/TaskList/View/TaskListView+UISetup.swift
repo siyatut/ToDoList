@@ -23,6 +23,7 @@ extension TaskListView {
         setupAddTaskButton()
 
         setupTableView()
+        setupKeyboardDismissRecognizer()
     }
 
     func setupNavigationBar() {
@@ -75,6 +76,7 @@ extension TaskListView {
         searchBar.tintColor = .white
         searchBar.backgroundImage = UIImage()
         searchBar.searchTextField.backgroundColor = .clear
+        searchBar.searchTextField.textColor = .white
         searchBar.searchTextField.borderStyle = .none
 
         searchBar.searchTextField.leftViewMode = .always
@@ -161,5 +163,11 @@ extension TaskListView {
             addTaskButton.centerYAnchor.constraint(equalTo: taskCountLabel.centerYAnchor),
             addTaskButton.trailingAnchor.constraint(equalTo: taskFooterView.trailingAnchor, constant: -16)
         ])
+    }
+
+    func setupKeyboardDismissRecognizer() {
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
+        tapGesture.cancelsTouchesInView = false
+        view.addGestureRecognizer(tapGesture)
     }
 }
