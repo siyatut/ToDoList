@@ -9,18 +9,14 @@ import UIKit
 
 protocol TaskEditInteractorProtocol {
     func createTask(title: String, description: String) -> Task
-    func updateTask(_ task: Task)
-    func saveTask(_ task: Task)
-    func createTemporaryTask() -> Task
     func getFormattedDate() -> String
+    func saveTask(_ task: Task)
 }
 
 final class TaskEditInteractor: TaskEditInteractorProtocol {
 
-    // MARK: - Task Creation
-
     func createTask(title: String, description: String) -> Task {
-        return Task(
+        let newTask = Task(
             id: UUID().uuidString,
             title: title,
             description: description,
@@ -28,17 +24,9 @@ final class TaskEditInteractor: TaskEditInteractorProtocol {
             dateUpdated: getFormattedDate(),
             isCompleted: false
         )
-    }
+        saveTask(newTask)
 
-    func createTemporaryTask() -> Task {
-        return Task(
-            id: UUID().uuidString,
-            title: "",
-            description: "",
-            dateCreated: getFormattedDate(),
-            dateUpdated: nil,
-            isCompleted: false
-        )
+        return newTask
     }
 
     func getFormattedDate() -> String {
@@ -47,9 +35,5 @@ final class TaskEditInteractor: TaskEditInteractorProtocol {
 
     func saveTask(_ task: Task) {
         CoreDataManager.shared.saveTask(task)
-    }
-
-    func updateTask(_ task: Task) {
-        CoreDataManager.shared.updateTask(task)
     }
 }

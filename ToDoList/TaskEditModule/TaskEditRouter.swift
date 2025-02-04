@@ -8,6 +8,7 @@
 import UIKit
 
 protocol TaskEditRouterProtocol {
+    func dismissView()
 }
 
 final class TaskEditRouter: TaskEditRouterProtocol {
@@ -28,5 +29,9 @@ final class TaskEditRouter: TaskEditRouterProtocol {
         view.presenter = presenter
         router.viewController = view
         return view
+    }
+
+    func dismissView() {
+        viewController?.navigationController?.popViewController(animated: true)
     }
 }

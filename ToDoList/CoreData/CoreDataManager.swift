@@ -33,6 +33,8 @@ final class CoreDataManager {
         return container
     }()
 
+    // MARK: - Save Context
+
     func saveContext() {
         if context.hasChanges {
             do {
@@ -49,28 +51,66 @@ final class CoreDataManager {
     // MARK: - Task Management
 
     func saveTask(_ task: Task) {
-        let taskEntity = TaskEntity(context: context)
-        taskEntity.id = task.id
-        taskEntity.title = task.title
-        taskEntity.descriptionText = task.description
-        taskEntity.dateCreated = task.dateCreated
-        taskEntity.isCompleted = task.isCompleted
-        saveContext()
-    }
-
-    func updateTask(_ task: Task) {
         let fetchRequest: NSFetchRequest<TaskEntity> = TaskEntity.fetchRequest()
         fetchRequest.predicate = NSPredicate(format: "id == %@", task.id)
 
         do {
-            if let taskEntity = try context.fetch(fetchRequest).first {
-                taskEntity.title = task.title
-                taskEntity.descriptionText = task.description
-                taskEntity.isCompleted = task.isCompleted
-                saveContext()
+            let existingTaskEntities = try context.fetch(fetchRequest)
+
+            if let existingTaskEntity = existingTaskEntities.first {
+                existingTaskEntity.title = task.title
+                existingTaskEntity.descriptionText = task.description
+                existingTaskEntity.dateCreated = task.dateCreated
+                existingTaskEntity.isCompleted = task.isCompleted
+            } else {
+                let newTaskEntity = TaskEntity(context: context)
+                newTaskEntity.id = task.id
+                newTaskEntity.title = task.title
+                newTaskEntity.descriptionText = task.description
+                newTaskEntity.dateCreated = task.dateCreated
+                newTaskEntity.isCompleted = task.isCompleted
+            }
+
+            saveContext()
+
+        } catch {
+            print("Failed to fetch or save task: \(error)")
+        }
+    }
+
+    func fetchTasks() -> [Task] {
+        let fetchRequest: NSFetchRequest<TaskEntity> = TaskEntity.fetchRequest()
+
+        do {
+            let taskEntities = try context.fetch(fetchRequest)
+            return taskEntities.map { taskEntity in
+                Task(
+                    id: taskEntity.id ?? "",
+                    title: taskEntity.title ?? "",
+                    description: taskEntity.descriptionText ?? "",
+                    dateCreated: taskEntity.dateCreated ?? "",
+                    isCompleted: taskEntity.isCompleted
+                )
             }
         } catch {
-            print("Failed to update task: \(error)")
+            print("Failed to fetch tasks from Core Data: \(error)")
+            return []
+        }
+    }
+
+    func deleteTask(_ task: Task) {
+        let fetchRequest: NSFetchRequest<TaskEntity> = TaskEntity.fetchRequest()
+        fetchRequest.predicate = NSPredicate(format: "id == %@", task.id)
+
+        do {
+            let taskEntities = try context.fetch(fetchRequest)
+            if let taskEntity = taskEntities.first {
+                context.delete(taskEntity)
+                saveContext()
+                print("Task deleted: \(task.title)")
+            }
+        } catch {
+            print("Failed to delete task: \(error)")
         }
     }
 }

@@ -40,33 +40,28 @@ final class TaskEditPresenter: TaskEditPresenterProtocol {
             let formattedDate = formatDateToShow(task)
             view?.updateTask(task, formattedDate: formattedDate)
         } else {
-            let newTask = interactor.createTemporaryTask()
+            let newTask = interactor.createTask(title: "", description: "")
             let formattedDate = formatDateToShow(newTask)
             view?.updateTask(newTask, formattedDate: formattedDate)
         }
     }
 
-    // MARK: - Data handling
-
     private func formatDateToShow(_ task: Task) -> String {
-        if let dateUpdated = task.dateUpdated, !dateUpdated.isEmpty {
-            return dateUpdated
-        } else {
-            return task.dateCreated
-        }
+        return task.dateUpdated ?? task.dateCreated
     }
 
-    // MARK: - User Actions
-
     func didTapSave(title: String, description: String) {
+        let currentDate = DateFormatter.localizedString(from: Date(), dateStyle: .short, timeStyle: .none)
+
         if var task = task {
             task.title = title
             task.description = description
-            task.dateUpdated = interactor.getFormattedDate()
-            interactor.updateTask(task)
+            task.dateUpdated = currentDate
+            interactor.saveTask(task)
         } else {
             let newTask = interactor.createTask(title: title, description: description)
             interactor.saveTask(newTask)
         }
+        router.dismissView()
     }
 }

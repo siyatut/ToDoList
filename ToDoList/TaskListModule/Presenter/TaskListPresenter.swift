@@ -73,6 +73,16 @@ final class TaskListPresenter: TaskListPresenterProtocol {
         return isSearching ? filteredTasks[index] : tasks[index]
     }
 
+    func updateTask(_ task: Task) {
+        interactor.updateTask(task)
+        let updatedTasks = fetchTasksFromCoreData()
+        view?.updateTasks(updatedTasks)
+    }
+
+    func fetchTasksFromCoreData() -> [Task] {
+        return interactor.fetchTasksFromCoreData()
+    }
+
     // MARK: - User actions
 
     func toggleTaskCompletion(at index: Int) {
