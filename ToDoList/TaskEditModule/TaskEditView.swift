@@ -56,6 +56,16 @@ final class TaskEditView: UIViewController, TaskEditViewProtocol {
         return label
     }()
 
+    private let doneButton: UIButton = {
+        let button = UIButton(type: .system)
+        button.setTitle("Готово", for: .normal)
+        button.setTitleColor(.systemYellow, for: .normal)
+        button.titleLabel?.font = UIFont.systemFont(ofSize: 17, weight: .bold)
+        button.isEnabled = false
+        button.alpha = 0
+        return button
+    }()
+
     // MARK: - Lifecycle
 
     override func viewDidLoad() {
@@ -63,6 +73,23 @@ final class TaskEditView: UIViewController, TaskEditViewProtocol {
         setupView()
         setupConstraints()
         presenter?.viewDidLoad()
+        navigationItem.rightBarButtonItem = UIBarButtonItem(customView: doneButton)
+    }
+
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(keyboardWillShow),
+            name: UIResponder.keyboardWillShowNotification,
+            object: nil
+        )
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(keyboardWillHide),
+            name: UIResponder.keyboardWillHideNotification,
+            object: nil
+        )
     }
 
     override func viewWillDisappear(_ animated: Bool) {
@@ -70,14 +97,16 @@ final class TaskEditView: UIViewController, TaskEditViewProtocol {
         saveChanges()
     }
 
+    deinit {
+        NotificationCenter.default.removeObserver(self)
+    }
+
     // MARK: - Setup
 
     private func setupView() {
         view.backgroundColor = .black
         navigationController?.navigationBar.tintColor = .systemYellow
-        let backButton = UIBarButtonItem()
-        backButton.title = "Назад"
-        navigationItem.backBarButtonItem = backButton
+        doneButton.addTarget(self, action: #selector(dismissKeyboard), for: .touchUpInside)
 
         view.addSubview(titleTextField)
         view.addSubview(dateLastUpdateLabel)
@@ -115,5 +144,21 @@ final class TaskEditView: UIViewController, TaskEditViewProtocol {
         titleTextField.text = task.title
         descriptionTextView.text = task.description
         dateLastUpdateLabel.text = formattedDate
+    }
+
+    // MARK: - Keyboard Handling
+
+    @objc func dismissKeyboard() {
+        view.endEditing(true)
+    }
+
+    @objc func keyboardWillShow(notification: Notification) {
+        doneButton.isEnabled = true
+        doneButton.alpha = 1.0
+    }
+
+    @objc func keyboardWillHide(notification: Notification) {
+        doneButton.isEnabled = false
+        doneButton.alpha = 0.0
     }
 }
