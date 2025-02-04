@@ -21,10 +21,19 @@ final class TaskEditView: UIViewController, TaskEditViewProtocol {
 
     private let titleTextField: UITextField = {
         let textField = UITextField()
-        textField.placeholder = "Название задачи"
         textField.font = UIFont.systemFont(ofSize: 34, weight: .bold)
         textField.borderStyle = .none
         textField.textColor = .white
+        textField.tintColor = .darkGray
+
+        let placeholderAttributes: [NSAttributedString.Key: Any] = [
+            .foregroundColor: UIColor.darkGray,
+            .font: UIFont.systemFont(ofSize: 34, weight: .bold)
+        ]
+        textField.attributedPlaceholder = NSAttributedString(
+            string: "Название задачи",
+            attributes: placeholderAttributes
+        )
         textField.translatesAutoresizingMaskIntoConstraints = false
         return textField
     }()
@@ -34,6 +43,7 @@ final class TaskEditView: UIViewController, TaskEditViewProtocol {
         textView.font = UIFont.systemFont(ofSize: 16)
         textView.backgroundColor = .black
         textView.textColor = .white
+        textView.tintColor = .darkGray
         textView.translatesAutoresizingMaskIntoConstraints = false
         return textView
     }()

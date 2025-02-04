@@ -16,9 +16,9 @@ protocol TaskEditInteractorProtocol {
 }
 
 final class TaskEditInteractor: TaskEditInteractorProtocol {
-    
+
     // MARK: - Task Creation
-    
+
     func createTask(title: String, description: String) -> Task {
         return Task(
             id: UUID().uuidString,
@@ -29,7 +29,7 @@ final class TaskEditInteractor: TaskEditInteractorProtocol {
             isCompleted: false
         )
     }
-    
+
     func createTemporaryTask() -> Task {
         return Task(
             id: UUID().uuidString,
@@ -40,15 +40,15 @@ final class TaskEditInteractor: TaskEditInteractorProtocol {
             isCompleted: false
         )
     }
-    
+
     func getFormattedDate() -> String {
         return DateFormatter.localizedString(from: Date(), dateStyle: .short, timeStyle: .none)
     }
-    
+
     func saveTask(_ task: Task) {
         CoreDataManager.shared.saveTask(task)
     }
-    
+
     func updateTask(_ task: Task) {
         CoreDataManager.shared.updateTask(task)
     }

@@ -45,9 +45,9 @@ final class TaskEditPresenter: TaskEditPresenterProtocol {
             view?.updateTask(newTask, formattedDate: formattedDate)
         }
     }
-    
+
     // MARK: - Data handling
-    
+
     private func formatDateToShow(_ task: Task) -> String {
         if let dateUpdated = task.dateUpdated, !dateUpdated.isEmpty {
             return dateUpdated
@@ -57,7 +57,7 @@ final class TaskEditPresenter: TaskEditPresenterProtocol {
     }
 
     // MARK: - User Actions
-    
+
     func didTapSave(title: String, description: String) {
         if var task = task {
             task.title = title
