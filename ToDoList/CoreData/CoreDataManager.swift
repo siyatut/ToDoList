@@ -60,7 +60,7 @@ final class CoreDataManager {
 
     func updateTask(_ task: Task) {
         let fetchRequest: NSFetchRequest<TaskEntity> = TaskEntity.fetchRequest()
-        fetchRequest.predicate = NSPredicate(format: "id == %d", task.id)
+        fetchRequest.predicate = NSPredicate(format: "id == %@", task.id)
 
         do {
             if let taskEntity = try context.fetch(fetchRequest).first {

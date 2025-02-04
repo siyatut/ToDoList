@@ -63,7 +63,7 @@ final class TaskListInteractor: TaskListInteractorProtocol, TaskUpdating {
         let context = CoreDataManager.shared.context
         context.perform {
             let fetchRequest: NSFetchRequest<TaskEntity> = TaskEntity.fetchRequest()
-            fetchRequest.predicate = NSPredicate(format: "id == %d", task.id)
+            fetchRequest.predicate = NSPredicate(format: "id == %@", task.id)
 
             do {
                 if let existingTask = try context.fetch(fetchRequest).first {
@@ -117,7 +117,7 @@ final class TaskListInteractor: TaskListInteractorProtocol, TaskUpdating {
         context.perform {
             tasks.forEach { task in
                 let fetchRequest: NSFetchRequest<TaskEntity> = TaskEntity.fetchRequest()
-                fetchRequest.predicate = NSPredicate(format: "id == %d", task.id)
+                fetchRequest.predicate = NSPredicate(format: "id == %@", task.id)
 
                 do {
                     if let existingTask = try context.fetch(fetchRequest).first {
@@ -152,7 +152,7 @@ final class TaskListInteractor: TaskListInteractorProtocol, TaskUpdating {
     func deleteTask(_ task: Task) {
         let context = CoreDataManager.shared.context
         let fetchRequest: NSFetchRequest<TaskEntity> = TaskEntity.fetchRequest()
-        fetchRequest.predicate = NSPredicate(format: "id == %d", task.id)
+        fetchRequest.predicate = NSPredicate(format: "id == %@", task.id)
 
         do {
             let results = try context.fetch(fetchRequest)
