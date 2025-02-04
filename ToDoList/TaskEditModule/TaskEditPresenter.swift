@@ -55,7 +55,7 @@ final class TaskEditPresenter: TaskEditPresenterProtocol {
             interactor.updateTask(task)
         } else {
             let newTask = Task(
-                id: Int(Date().timeIntervalSince1970),
+                id: UUID().uuidString,
                 title: title,
                 description: description,
                 dateCreated: currentDate,

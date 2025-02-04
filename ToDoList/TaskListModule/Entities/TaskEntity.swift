@@ -19,7 +19,7 @@ struct TemporaryTask: Decodable {
 }
 
 struct Task: Decodable {
-    let id: Int
+    let id: String
     var title: String
     var description: String
     var dateCreated: String

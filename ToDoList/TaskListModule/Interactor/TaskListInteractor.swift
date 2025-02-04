@@ -97,7 +97,7 @@ final class TaskListInteractor: TaskListInteractorProtocol, TaskUpdating {
             let taskEntities = try context.fetch(fetchRequest)
             return taskEntities.map { taskEntity in
                 Task(
-                    id: Int(taskEntity.id),
+                    id: taskEntity.id ?? "",
                     title: taskEntity.title ?? "",
                     description: taskEntity.descriptionText ?? "",
                     dateCreated: taskEntity.dateCreated ?? "",
@@ -127,7 +127,7 @@ final class TaskListInteractor: TaskListInteractorProtocol, TaskUpdating {
                         existingTask.isCompleted = task.isCompleted
                     } else {
                         let taskEntity = TaskEntity(context: context)
-                        taskEntity.id = Int64(task.id)
+                        taskEntity.id = task.id
                         taskEntity.title = task.title
                         taskEntity.descriptionText = task.description
                         taskEntity.dateCreated = task.dateCreated

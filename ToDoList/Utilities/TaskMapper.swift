@@ -10,7 +10,7 @@ import UIKit
 final class TaskMapper {
     static func map(_ temporaryTask: TemporaryTask) -> Task {
         return Task(
-            id: temporaryTask.id,
+            id: String(temporaryTask.id),
             title: temporaryTask.todo,
             description: "Задача от пользователя с ID \(temporaryTask.userId)",
             dateCreated: "02/10/2024",

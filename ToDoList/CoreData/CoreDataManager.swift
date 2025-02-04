@@ -50,7 +50,7 @@ final class CoreDataManager {
 
     func saveTask(_ task: Task) {
         let taskEntity = TaskEntity(context: context)
-        taskEntity.id = Int64(task.id)
+        taskEntity.id = task.id
         taskEntity.title = task.title
         taskEntity.descriptionText = task.description
         taskEntity.dateCreated = task.dateCreated
