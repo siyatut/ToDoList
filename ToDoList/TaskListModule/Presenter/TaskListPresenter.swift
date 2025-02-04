@@ -165,3 +165,20 @@ final class TaskListPresenter: TaskListPresenterProtocol {
     }
 
 }
+
+extension TaskListPresenter: TaskEditDelegate {
+    func didUpdateTask(_ task: Task) {
+        interactor.updateTask(task)
+        if let index = tasks.firstIndex(where: { $0.id == task.id }) {
+            tasks[index] = task
+            view?.updateTask(at: IndexPath(row: index, section: 0))
+            print("TaskListPresenter: Task updated in list with title: \(task.title)")
+        }
+    }
+
+    func didAddTask(_ task: Task) {
+        tasks.append(task)
+        view?.updateTasks(tasks)
+        print("TaskListPresenter: Task added to list with title: \(task.title)")
+    }
+}

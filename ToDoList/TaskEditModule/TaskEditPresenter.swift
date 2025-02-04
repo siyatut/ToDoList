@@ -20,17 +20,20 @@ final class TaskEditPresenter: TaskEditPresenterProtocol {
     private let interactor: TaskEditInteractorProtocol
     private let router: TaskEditRouterProtocol
     private var task: Task?
+    weak var delegate: TaskEditDelegate?
 
     // MARK: - Init
 
     init(view: TaskEditViewProtocol,
          interactor: TaskEditInteractorProtocol,
          router: TaskEditRouterProtocol,
-         task: Task?) {
+         task: Task?,
+         delegate: TaskEditDelegate?) {
         self.view = view
         self.interactor = interactor
         self.router = router
         self.task = task
+        self.delegate = delegate
     }
 
     // MARK: - Lifecycle
@@ -58,9 +61,13 @@ final class TaskEditPresenter: TaskEditPresenterProtocol {
             task.description = description
             task.dateUpdated = currentDate
             interactor.saveTask(task)
+            delegate?.didUpdateTask(task)
+            print("TaskEditPresenter: Task updated with title: \(title), description: \(description)")
         } else {
             let newTask = interactor.createTask(title: title, description: description)
             interactor.saveTask(newTask)
+            delegate?.didAddTask(newTask)
+            print("TaskEditPresenter: Task added with title: \(title), description: \(description)")
         }
         router.dismissView()
     }

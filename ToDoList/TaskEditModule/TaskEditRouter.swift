@@ -15,7 +15,7 @@ final class TaskEditRouter: TaskEditRouterProtocol {
 
     weak var viewController: UIViewController?
 
-    static func createModule(with task: Task?) -> UIViewController {
+    static func createModule(with task: Task?, delegate: TaskEditDelegate?) -> UIViewController {
         let view = TaskEditView()
         let interactor = TaskEditInteractor()
         let router = TaskEditRouter()
@@ -23,7 +23,8 @@ final class TaskEditRouter: TaskEditRouterProtocol {
             view: view,
             interactor: interactor,
             router: router,
-            task: task
+            task: task,
+            delegate: delegate
         )
 
         view.presenter = presenter
