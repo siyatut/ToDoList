@@ -8,7 +8,7 @@
 import UIKit
 
 protocol TaskEditViewProtocol: AnyObject {
-    func updateTask(_ task: Task)
+    func updateTask(_ task: Task, formattedDate: String)
 }
 
 final class TaskEditView: UIViewController, TaskEditViewProtocol {
@@ -42,7 +42,6 @@ final class TaskEditView: UIViewController, TaskEditViewProtocol {
         let label = UILabel()
         label.font = UIFont.systemFont(ofSize: 12, weight: .regular)
         label.textColor = .darkGray
-        label.text = "02/10/2024"
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
@@ -102,9 +101,9 @@ final class TaskEditView: UIViewController, TaskEditViewProtocol {
 
     // MARK: - Display Data
 
-    func updateTask(_ task: Task) {
+    func updateTask(_ task: Task, formattedDate: String) {
         titleTextField.text = task.title
         descriptionTextView.text = task.description
-        dateLastUpdateLabel.text = task.dateUpdated ?? task.dateCreated
+        dateLastUpdateLabel.text = formattedDate
     }
 }

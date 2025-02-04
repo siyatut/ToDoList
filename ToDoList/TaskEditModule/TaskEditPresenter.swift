@@ -36,33 +36,37 @@ final class TaskEditPresenter: TaskEditPresenterProtocol {
     // MARK: - Lifecycle
 
     func viewDidLoad() {
-        guard let task = task else {
-            print("Error: task is nil")
-            return
+        if let task = task {
+            let formattedDate = formatDateToShow(task)
+            view?.updateTask(task, formattedDate: formattedDate)
+        } else {
+            let newTask = interactor.createTemporaryTask()
+            let formattedDate = formatDateToShow(newTask)
+            view?.updateTask(newTask, formattedDate: formattedDate)
         }
-        view?.updateTask(task)
+    }
+    
+    // MARK: - Data handling
+    
+    private func formatDateToShow(_ task: Task) -> String {
+        if let dateUpdated = task.dateUpdated, !dateUpdated.isEmpty {
+            return dateUpdated
+        } else {
+            return task.dateCreated
+        }
     }
 
     // MARK: - User Actions
-
+    
     func didTapSave(title: String, description: String) {
-        let currentDate = DateFormatter.localizedString(from: Date(), dateStyle: .short, timeStyle: .none)
-
         if var task = task {
             task.title = title
             task.description = description
-            task.dateUpdated = currentDate
+            task.dateUpdated = interactor.getFormattedDate()
             interactor.updateTask(task)
         } else {
-            let newTask = Task(
-                id: UUID().uuidString,
-                title: title,
-                description: description,
-                dateCreated: currentDate,
-                dateUpdated: currentDate,
-                isCompleted: false
-            )
-            interactor.createTask(newTask)
+            let newTask = interactor.createTask(title: title, description: description)
+            interactor.saveTask(newTask)
         }
     }
 }
