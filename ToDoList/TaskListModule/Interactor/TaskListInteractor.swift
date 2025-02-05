@@ -110,8 +110,17 @@ final class TaskListInteractor: TaskListInteractorProtocol {
     func deleteTask(_ task: Task, completion: @escaping (Bool) -> Void) {
         DispatchQueue.global(qos: .userInitiated).async {
             CoreDataManager.shared.deleteTask(task) { success in
-                DispatchQueue.main.async {
-                    completion(success)
+                if success {
+                    if let index = self.cachedTasks.firstIndex(where: { $0.id == task.id }) {
+                        self.cachedTasks.remove(at: index)
+                    }
+                    DispatchQueue.main.async {
+                        completion(true)
+                    }
+                } else {
+                    DispatchQueue.main.async {
+                        completion(false)
+                    }
                 }
             }
         }

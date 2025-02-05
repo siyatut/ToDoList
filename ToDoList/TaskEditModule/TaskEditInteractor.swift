@@ -16,23 +16,14 @@ protocol TaskEditInteractorProtocol {
 final class TaskEditInteractor: TaskEditInteractorProtocol {
 
     func createTask(title: String, description: String) -> Task {
-        let newTask = Task(
+        return Task(
             id: UUID().uuidString,
             title: title,
             description: description,
             dateCreated: getFormattedDate(),
-            dateUpdated: getFormattedDate(),
+            dateUpdated: nil,
             isCompleted: false
         )
-        saveTask(newTask) { success in
-            if success {
-                print("Task created successfully: \(newTask.title)")
-            } else {
-                print("Failed to create task")
-            }
-        }
-
-        return newTask
     }
 
     func getFormattedDate() -> String {
@@ -40,7 +31,7 @@ final class TaskEditInteractor: TaskEditInteractorProtocol {
     }
 
     func saveTask(_ task: Task, completion: @escaping (Bool) -> Void) {
-        DispatchQueue.global(qos: .background).async {
+        DispatchQueue.global(qos: .userInitiated).async {
             CoreDataManager.shared.saveTask(task) { success in
                 DispatchQueue.main.async {
                     completion(success)

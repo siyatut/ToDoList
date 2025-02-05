@@ -23,6 +23,10 @@ final class CoreDataManager {
         return persistentContainer.viewContext
     }
 
+    private var backgroundContext: NSManagedObjectContext {
+        return persistentContainer.newBackgroundContext()
+    }
+
     lazy var persistentContainer: NSPersistentContainer = {
         let container = NSPersistentContainer(name: "TaskModel")
         container.loadPersistentStores { _, error in
@@ -51,28 +55,27 @@ final class CoreDataManager {
     // MARK: - Task Management
 
     func saveTask(_ task: Task, completion: @escaping (Bool) -> Void) {
-        DispatchQueue.global(qos: .background).async {
+        let backgroundContext = self.backgroundContext
+        backgroundContext.perform {
             let fetchRequest: NSFetchRequest<TaskEntity> = TaskEntity.fetchRequest()
             fetchRequest.predicate = NSPredicate(format: "id == %@", task.id)
 
             do {
-                let existingTaskEntities = try self.context.fetch(fetchRequest)
-
+                let existingTaskEntities = try backgroundContext.fetch(fetchRequest)
                 if let existingTaskEntity = existingTaskEntities.first {
                     existingTaskEntity.title = task.title
                     existingTaskEntity.descriptionText = task.description
                     existingTaskEntity.dateCreated = task.dateCreated
                     existingTaskEntity.isCompleted = task.isCompleted
                 } else {
-                    let newTaskEntity = TaskEntity(context: self.context)
+                    let newTaskEntity = TaskEntity(context: backgroundContext)
                     newTaskEntity.id = task.id
                     newTaskEntity.title = task.title
                     newTaskEntity.descriptionText = task.description
                     newTaskEntity.dateCreated = task.dateCreated
                     newTaskEntity.isCompleted = task.isCompleted
                 }
-
-                self.saveContext()
+                try backgroundContext.save()
                 DispatchQueue.main.async {
                     completion(true)
                 }
@@ -86,11 +89,12 @@ final class CoreDataManager {
     }
 
     func fetchTasks(completion: @escaping ([Task]) -> Void) {
-        DispatchQueue.global(qos: .background).async {
+        let backgroundContext = self.backgroundContext
+        backgroundContext.perform {
             let fetchRequest: NSFetchRequest<TaskEntity> = TaskEntity.fetchRequest()
 
             do {
-                let taskEntities = try self.context.fetch(fetchRequest)
+                let taskEntities = try backgroundContext.fetch(fetchRequest)
                 let tasks = taskEntities.map { taskEntity in
                     Task(
                         id: taskEntity.id ?? "",
@@ -114,15 +118,16 @@ final class CoreDataManager {
     }
 
     func deleteTask(_ task: Task, completion: @escaping (Bool) -> Void) {
-        DispatchQueue.global(qos: .background).async {
+        let backgroundContext = self.backgroundContext
+        backgroundContext.perform {
             let fetchRequest: NSFetchRequest<TaskEntity> = TaskEntity.fetchRequest()
             fetchRequest.predicate = NSPredicate(format: "id == %@", task.id)
 
             do {
-                let taskEntities = try self.context.fetch(fetchRequest)
+                let taskEntities = try backgroundContext.fetch(fetchRequest)
                 if let taskEntity = taskEntities.first {
-                    self.context.delete(taskEntity)
-                    self.saveContext()
+                    backgroundContext.delete(taskEntity)
+                    try backgroundContext.save()
                     DispatchQueue.main.async {
                         completion(true)
                     }
