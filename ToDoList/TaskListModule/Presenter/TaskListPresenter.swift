@@ -13,7 +13,6 @@ final class TaskListPresenter: TaskListPresenterProtocol {
 
     weak var view: TaskListViewProtocol?
     private var interactor: TaskListInteractorProtocol
-    private var taskUpdater: TaskUpdating
     private var router: TaskListRouterProtocol
 
     // MARK: - Properties
@@ -27,12 +26,10 @@ final class TaskListPresenter: TaskListPresenterProtocol {
     init(
         view: TaskListViewProtocol,
         interactor: TaskListInteractorProtocol,
-        taskUpdater: TaskUpdating,
         router: TaskListRouterProtocol
     ) {
         self.view = view
         self.interactor = interactor
-        self.taskUpdater = taskUpdater
         self.router = router
     }
 
@@ -96,7 +93,7 @@ final class TaskListPresenter: TaskListPresenterProtocol {
             tasks[index].isCompleted.toggle()
             view?.updateTask(at: IndexPath(row: index, section: 0))
         }
-        taskUpdater.updateTask(isSearching ? filteredTasks[index] : tasks[index])
+        interactor.updateTask(isSearching ? filteredTasks[index] : tasks[index])
     }
 
     func didTapMicrophone() {
@@ -167,6 +164,7 @@ final class TaskListPresenter: TaskListPresenterProtocol {
 }
 
 extension TaskListPresenter: TaskEditDelegate {
+
     func didUpdateTask(_ task: Task) {
         interactor.updateTask(task)
         if let index = tasks.firstIndex(where: { $0.id == task.id }) {

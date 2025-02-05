@@ -22,7 +22,6 @@ final class TaskListRouter: TaskListRouterProtocol {
         let presenter = TaskListPresenter(
             view: view,
             interactor: interactor,
-            taskUpdater: interactor,
             router: router
         )
 

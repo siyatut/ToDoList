@@ -8,11 +8,7 @@
 import UIKit
 import CoreData
 
-protocol TaskUpdating {
-    func updateTask(_ task: Task)
-}
-
-final class TaskListInteractor: TaskListInteractorProtocol, TaskUpdating {
+final class TaskListInteractor: TaskListInteractorProtocol {
 
     // MARK: - Dependencies
 
