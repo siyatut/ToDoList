@@ -7,7 +7,7 @@
 
 import CoreData
 
-final class CoreDataManager {
+class CoreDataManager {
 
     // MARK: - Singleton instance
 
@@ -15,7 +15,7 @@ final class CoreDataManager {
 
     // MARK: - Init
 
-    private init() {}
+    init() {}
 
     // MARK: - Core Data Stack
 
