@@ -45,7 +45,9 @@ final class TaskListPresenter: TaskListPresenterProtocol {
         interactor.fetchTasks { [weak self] fetchedTasks in
             guard let self = self else { return }
             self.tasks = fetchedTasks
-            self.view?.updateTasks(fetchedTasks)
+            DispatchQueue.main.async {
+                self.view?.updateTasks(fetchedTasks)
+            }
         }
     }
 
@@ -71,29 +73,42 @@ final class TaskListPresenter: TaskListPresenterProtocol {
     }
 
     func updateTask(_ task: Task) {
-        interactor.updateTask(task)
-        let updatedTasks = fetchTasksFromCoreData()
-        view?.updateTasks(updatedTasks)
+        interactor.updateTask(task) { [weak self] success in
+            if success {
+                DispatchQueue.main.async {
+                    let updatedTasks = self?.fetchTasksFromCoreData() ?? []
+                    self?.view?.updateTasks(updatedTasks)
+                }
+            }
+        }
     }
 
     func fetchTasksFromCoreData() -> [Task] {
-        return interactor.fetchTasksFromCoreData()
+        var tasksFromCoreData: [Task] = []
+        interactor.fetchTasksFromCoreData { tasks in
+            tasksFromCoreData = tasks
+        }
+        return tasksFromCoreData
     }
 
     // MARK: - User actions
 
     func toggleTaskCompletion(at index: Int) {
-        if isSearching {
-            filteredTasks[index].isCompleted.toggle()
-            if let originalIndex = tasks.firstIndex(where: { $0.id == filteredTasks[index].id }) {
-                tasks[originalIndex].isCompleted.toggle()
+        var task = isSearching ? filteredTasks[index] : tasks[index]
+        task.isCompleted.toggle()
+
+        interactor.updateTask(task) { [weak self] success in
+            if success {
+                self?.view?.updateTask(at: IndexPath(row: index, section: 0))
             }
-            view?.updateTasks(filteredTasks)
-        } else {
-            tasks[index].isCompleted.toggle()
-            view?.updateTask(at: IndexPath(row: index, section: 0))
         }
-        interactor.updateTask(isSearching ? filteredTasks[index] : tasks[index])
+
+        if isSearching {
+            filteredTasks[index] = task
+        } else {
+            tasks[index] = task
+        }
+
     }
 
     func didTapMicrophone() {
@@ -105,7 +120,9 @@ final class TaskListPresenter: TaskListPresenterProtocol {
     func searchTasks(with query: String) {
         guard !query.isEmpty else {
             isSearching = false
-            view?.updateTasks(tasks)
+            DispatchQueue.main.async {
+                self.view?.updateTasks(self.tasks)
+            }
             return
         }
 
@@ -128,7 +145,9 @@ final class TaskListPresenter: TaskListPresenterProtocol {
 
     func cancelSearch() {
         isSearching = false
-        view?.updateTasks(tasks)
+        DispatchQueue.main.async {
+            self.view?.updateTasks(self.tasks)
+        }
     }
 
     // MARK: - Long press menu handling
@@ -145,7 +164,13 @@ final class TaskListPresenter: TaskListPresenterProtocol {
 
     func didSelectDeleteTask(at index: Int) {
         let taskToDelete = isSearching ? filteredTasks[index] : tasks[index]
-        interactor.deleteTask(taskToDelete)
+        interactor.deleteTask(taskToDelete) { [weak self] success in
+            if success {
+                DispatchQueue.main.async {
+                    self?.view?.deleteTask(at: IndexPath(row: index, section: 0))
+                }
+            }
+        }
 
         view?.resetHighlightForCell(at: IndexPath(row: index, section: 0))
 
@@ -157,26 +182,28 @@ final class TaskListPresenter: TaskListPresenterProtocol {
         } else {
             tasks.remove(at: index)
         }
-
-        view?.deleteTask(at: IndexPath(row: index, section: 0))
     }
-
 }
 
 extension TaskListPresenter: TaskEditDelegate {
 
     func didUpdateTask(_ task: Task) {
-        interactor.updateTask(task)
-        if let index = tasks.firstIndex(where: { $0.id == task.id }) {
-            tasks[index] = task
-            view?.updateTask(at: IndexPath(row: index, section: 0))
-            print("TaskListPresenter: Task updated in list with title: \(task.title)")
+        interactor.updateTask(task) { [weak self] success in
+            if success {
+                if let index = self?.tasks.firstIndex(where: { $0.id == task.id }) {
+                    self?.tasks[index] = task
+                    self?.view?.updateTask(at: IndexPath(row: index, section: 0))
+                    print("TaskListPresenter: Task updated in list with title: \(task.title)")
+                }
+            }
         }
     }
 
     func didAddTask(_ task: Task) {
         tasks.append(task)
-        view?.updateTasks(tasks)
+        DispatchQueue.main.async {
+            self.view?.updateTasks(self.tasks)
+        }
         print("TaskListPresenter: Task added to list with title: \(task.title)")
     }
 }

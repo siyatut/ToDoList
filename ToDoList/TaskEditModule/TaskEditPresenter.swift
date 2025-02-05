@@ -60,15 +60,27 @@ final class TaskEditPresenter: TaskEditPresenterProtocol {
             task.title = title
             task.description = description
             task.dateUpdated = currentDate
-            interactor.saveTask(task)
-            delegate?.didUpdateTask(task)
-            print("TaskEditPresenter: Task updated with title: \(title), description: \(description)")
+
+            interactor.saveTask(task) { success in
+                if success {
+                    self.delegate?.didUpdateTask(task)
+                    print("TaskEditPresenter: Task updated with title: \(title), description: \(description)")
+                    self.router.dismissView()
+                } else {
+                    print("Failed to update task")
+                }
+            }
         } else {
             let newTask = interactor.createTask(title: title, description: description)
-            interactor.saveTask(newTask)
-            delegate?.didAddTask(newTask)
-            print("TaskEditPresenter: Task added with title: \(title), description: \(description)")
+            interactor.saveTask(newTask) { success in
+                if success {
+                    self.delegate?.didAddTask(newTask)
+                    print("TaskEditPresenter: Task added with title: \(title), description: \(description)")
+                    self.router.dismissView()
+                } else {
+                    print("Failed to save new task")
+                }
+            }
         }
-        router.dismissView()
     }
 }

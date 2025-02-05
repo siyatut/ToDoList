@@ -25,28 +25,33 @@ final class TaskListInteractor: TaskListInteractorProtocol {
     // MARK: - Fetch tasks
 
     func fetchTasks(completion: @escaping ([Task]) -> Void) {
-        let cachedTasks = fetchTasksFromCoreData()
-        if !cachedTasks.isEmpty {
-            print("Using cached tasks from Core Data")
-            self.cachedTasks = cachedTasks
-            completion(cachedTasks)
-        } else {
-            print("Core Data is empty, fetching tasks from URL")
-            DispatchQueue.global(qos: .background).async {
-                self.networkManager.fetchTasks(from: self.urlString) { result in
-                    switch result {
-                    case .success(let temporaryTasks):
-                        let tasks = temporaryTasks.map(TaskMapper.map)
-                        self.cachedTasks = tasks
-                        self.saveTasksToCoreData(tasks: tasks)
-                        DispatchQueue.main.async {
-                            completion(tasks)
-                        }
-                    case .failure(let error):
-                        print("Failed to fetch tasks: \(error.localizedDescription)")
-                        DispatchQueue.main.async {
-                            completion([])
-                        }
+        fetchTasksFromCoreData { cachedTasks in
+            if !cachedTasks.isEmpty {
+                print("Using cached tasks from Core Data")
+                self.cachedTasks = cachedTasks
+                completion(cachedTasks)
+            } else {
+                print("Core Data is empty, fetching tasks from URL")
+                self.fetchTasksFromURL(completion: completion)
+            }
+        }
+    }
+
+    func fetchTasksFromURL(completion: @escaping ([Task]) -> Void) {
+        DispatchQueue.global(qos: .background).async {
+            self.networkManager.fetchTasks(from: self.urlString) { result in
+                switch result {
+                case .success(let temporaryTasks):
+                    let tasks = temporaryTasks.map(TaskMapper.map)
+                    self.cachedTasks = tasks
+                    self.saveTasksToCoreData(tasks: tasks)
+                    DispatchQueue.main.async {
+                        completion(tasks)
+                    }
+                case .failure(let error):
+                    print("Failed to fetch tasks: \(error.localizedDescription)")
+                    DispatchQueue.main.async {
+                        completion([])
                     }
                 }
             }
@@ -54,30 +59,61 @@ final class TaskListInteractor: TaskListInteractorProtocol {
     }
 
     // MARK: - Update task
-    func updateTask(_ task: Task) {
-        CoreDataManager.shared.saveTask(task)
-        if let index = self.cachedTasks.firstIndex(where: { $0.id == task.id }) {
-            self.cachedTasks[index] = task
+
+    func updateTask(_ task: Task, completion: @escaping (Bool) -> Void) {
+        DispatchQueue.global(qos: .userInitiated).async {
+            CoreDataManager.shared.saveTask(task) { success in
+                if success {
+                    if let index = self.cachedTasks.firstIndex(where: { $0.id == task.id }) {
+                        self.cachedTasks[index] = task
+                    }
+                    DispatchQueue.main.async {
+                        completion(true)
+                    }
+                } else {
+                    DispatchQueue.main.async {
+                        completion(false)
+                    }
+                }
+            }
         }
     }
 
     // MARK: - Fetch tasks from Core Data
 
-    func fetchTasksFromCoreData() -> [Task] {
-        return CoreDataManager.shared.fetchTasks()
+    func fetchTasksFromCoreData(completion: @escaping ([Task]) -> Void) {
+        DispatchQueue.global(qos: .background).async {
+            CoreDataManager.shared.fetchTasks { tasks in
+                DispatchQueue.main.async {
+                    completion(tasks)
+                }
+            }
+        }
     }
 
     // MARK: - Save tasks to Core Data
 
-    private func saveTasksToCoreData(tasks: [Task]) {
-        tasks.forEach { task in
-            CoreDataManager.shared.saveTask(task)
+    func saveTasksToCoreData(tasks: [Task]) {
+        DispatchQueue.global(qos: .background).async {
+            tasks.forEach { task in
+                CoreDataManager.shared.saveTask(task) { success in
+                    if success {
+                        print("Successfully saved task with ID \(task.id)")
+                    }
+                }
+            }
         }
     }
 
     // MARK: - Delete task from Core Data
 
-    func deleteTask(_ task: Task) {
-        CoreDataManager.shared.deleteTask(task)
+    func deleteTask(_ task: Task, completion: @escaping (Bool) -> Void) {
+        DispatchQueue.global(qos: .userInitiated).async {
+            CoreDataManager.shared.deleteTask(task) { success in
+                DispatchQueue.main.async {
+                    completion(success)
+                }
+            }
+        }
     }
 }

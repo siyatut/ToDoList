@@ -9,7 +9,9 @@ import UIKit
 
 protocol TaskListInteractorProtocol {
     func fetchTasks(completion: @escaping ([Task]) -> Void)
-    func fetchTasksFromCoreData() -> [Task]
-    func updateTask(_ task: Task)
-    func deleteTask(_ task: Task)
+    func fetchTasksFromURL(completion: @escaping ([Task]) -> Void)
+    func updateTask(_ task: Task, completion: @escaping (Bool) -> Void)
+    func fetchTasksFromCoreData(completion: @escaping ([Task]) -> Void)
+    func saveTasksToCoreData(tasks: [Task])
+    func deleteTask(_ task: Task, completion: @escaping (Bool) -> Void)
 }

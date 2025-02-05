@@ -50,67 +50,94 @@ final class CoreDataManager {
 
     // MARK: - Task Management
 
-    func saveTask(_ task: Task) {
-        let fetchRequest: NSFetchRequest<TaskEntity> = TaskEntity.fetchRequest()
-        fetchRequest.predicate = NSPredicate(format: "id == %@", task.id)
+    func saveTask(_ task: Task, completion: @escaping (Bool) -> Void) {
+        DispatchQueue.global(qos: .background).async {
+            let fetchRequest: NSFetchRequest<TaskEntity> = TaskEntity.fetchRequest()
+            fetchRequest.predicate = NSPredicate(format: "id == %@", task.id)
 
-        do {
-            let existingTaskEntities = try context.fetch(fetchRequest)
+            do {
+                let existingTaskEntities = try self.context.fetch(fetchRequest)
 
-            if let existingTaskEntity = existingTaskEntities.first {
-                existingTaskEntity.title = task.title
-                existingTaskEntity.descriptionText = task.description
-                existingTaskEntity.dateCreated = task.dateCreated
-                existingTaskEntity.isCompleted = task.isCompleted
-            } else {
-                let newTaskEntity = TaskEntity(context: context)
-                newTaskEntity.id = task.id
-                newTaskEntity.title = task.title
-                newTaskEntity.descriptionText = task.description
-                newTaskEntity.dateCreated = task.dateCreated
-                newTaskEntity.isCompleted = task.isCompleted
+                if let existingTaskEntity = existingTaskEntities.first {
+                    existingTaskEntity.title = task.title
+                    existingTaskEntity.descriptionText = task.description
+                    existingTaskEntity.dateCreated = task.dateCreated
+                    existingTaskEntity.isCompleted = task.isCompleted
+                } else {
+                    let newTaskEntity = TaskEntity(context: self.context)
+                    newTaskEntity.id = task.id
+                    newTaskEntity.title = task.title
+                    newTaskEntity.descriptionText = task.description
+                    newTaskEntity.dateCreated = task.dateCreated
+                    newTaskEntity.isCompleted = task.isCompleted
+                }
+
+                self.saveContext()
+                DispatchQueue.main.async {
+                    completion(true)
+                }
+            } catch {
+                DispatchQueue.main.async {
+                    completion(false)
+                }
+                print("Failed to fetch or save task: \(error)")
             }
-
-            saveContext()
-
-        } catch {
-            print("Failed to fetch or save task: \(error)")
         }
     }
 
-    func fetchTasks() -> [Task] {
-        let fetchRequest: NSFetchRequest<TaskEntity> = TaskEntity.fetchRequest()
+    func fetchTasks(completion: @escaping ([Task]) -> Void) {
+        DispatchQueue.global(qos: .background).async {
+            let fetchRequest: NSFetchRequest<TaskEntity> = TaskEntity.fetchRequest()
 
-        do {
-            let taskEntities = try context.fetch(fetchRequest)
-            return taskEntities.map { taskEntity in
-                Task(
-                    id: taskEntity.id ?? "",
-                    title: taskEntity.title ?? "",
-                    description: taskEntity.descriptionText ?? "",
-                    dateCreated: taskEntity.dateCreated ?? "",
-                    isCompleted: taskEntity.isCompleted
-                )
+            do {
+                let taskEntities = try self.context.fetch(fetchRequest)
+                let tasks = taskEntities.map { taskEntity in
+                    Task(
+                        id: taskEntity.id ?? "",
+                        title: taskEntity.title ?? "",
+                        description: taskEntity.descriptionText ?? "",
+                        dateCreated: taskEntity.dateCreated ?? "",
+                        isCompleted: taskEntity.isCompleted
+                    )
+                }
+                DispatchQueue.main.async {
+                    completion(tasks)
+                }
+
+            } catch {
+                print("Failed to fetch tasks from Core Data: \(error)")
+                DispatchQueue.main.async {
+                    completion([])
+                }
             }
-        } catch {
-            print("Failed to fetch tasks from Core Data: \(error)")
-            return []
         }
     }
 
-    func deleteTask(_ task: Task) {
-        let fetchRequest: NSFetchRequest<TaskEntity> = TaskEntity.fetchRequest()
-        fetchRequest.predicate = NSPredicate(format: "id == %@", task.id)
+    func deleteTask(_ task: Task, completion: @escaping (Bool) -> Void) {
+        DispatchQueue.global(qos: .background).async {
+            let fetchRequest: NSFetchRequest<TaskEntity> = TaskEntity.fetchRequest()
+            fetchRequest.predicate = NSPredicate(format: "id == %@", task.id)
 
-        do {
-            let taskEntities = try context.fetch(fetchRequest)
-            if let taskEntity = taskEntities.first {
-                context.delete(taskEntity)
-                saveContext()
-                print("Task deleted: \(task.title)")
+            do {
+                let taskEntities = try self.context.fetch(fetchRequest)
+                if let taskEntity = taskEntities.first {
+                    self.context.delete(taskEntity)
+                    self.saveContext()
+                    DispatchQueue.main.async {
+                        completion(true)
+                    }
+                    print("Task deleted: \(task.title)")
+                } else {
+                    DispatchQueue.main.async {
+                        completion(false)
+                    }
+                }
+            } catch {
+                print("Failed to delete task: \(error)")
+                DispatchQueue.main.async {
+                    completion(false)
+                }
             }
-        } catch {
-            print("Failed to delete task: \(error)")
         }
     }
 }

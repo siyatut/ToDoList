@@ -10,7 +10,7 @@ import UIKit
 protocol TaskEditInteractorProtocol {
     func createTask(title: String, description: String) -> Task
     func getFormattedDate() -> String
-    func saveTask(_ task: Task)
+    func saveTask(_ task: Task, completion: @escaping (Bool) -> Void)
 }
 
 final class TaskEditInteractor: TaskEditInteractorProtocol {
@@ -24,7 +24,13 @@ final class TaskEditInteractor: TaskEditInteractorProtocol {
             dateUpdated: getFormattedDate(),
             isCompleted: false
         )
-        saveTask(newTask)
+        saveTask(newTask) { success in
+            if success {
+                print("Task created successfully: \(newTask.title)")
+            } else {
+                print("Failed to create task")
+            }
+        }
 
         return newTask
     }
@@ -33,7 +39,13 @@ final class TaskEditInteractor: TaskEditInteractorProtocol {
         return DateFormatter.localizedString(from: Date(), dateStyle: .short, timeStyle: .none)
     }
 
-    func saveTask(_ task: Task) {
-        CoreDataManager.shared.saveTask(task)
+    func saveTask(_ task: Task, completion: @escaping (Bool) -> Void) {
+        DispatchQueue.global(qos: .background).async {
+            CoreDataManager.shared.saveTask(task) { success in
+                DispatchQueue.main.async {
+                    completion(success)
+                }
+            }
+        }
     }
 }
