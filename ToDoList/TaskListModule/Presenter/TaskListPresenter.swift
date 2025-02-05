@@ -193,7 +193,6 @@ extension TaskListPresenter: TaskEditDelegate {
                 if let index = self?.tasks.firstIndex(where: { $0.id == task.id }) {
                     self?.tasks[index] = task
                     self?.view?.updateTask(at: IndexPath(row: index, section: 0))
-                    print("TaskListPresenter: Task updated in list with title: \(task.title)")
                 }
             }
         }
@@ -201,13 +200,11 @@ extension TaskListPresenter: TaskEditDelegate {
 
     func didAddTask(_ task: Task) {
         guard !tasks.contains(where: { $0.id == task.id }) else {
-               print("TaskListPresenter: Task with ID \(task.id) already exists")
                return
            }
         tasks.append(task)
         DispatchQueue.main.async {
             self.view?.updateTasks(self.tasks)
         }
-        print("TaskListPresenter: Task added to list with title: \(task.title)")
     }
 }

@@ -36,7 +36,6 @@ final class TaskListRouter: TaskListRouterProtocol {
     func navigateToAddTask() {
         guard let taskListView = viewController as? TaskListView,
               let presenter = taskListView.presenter else {
-            print("Error: Unable to get TaskListPresenter")
             return
         }
         let taskEditView = TaskEditRouter.createModule(with: nil, delegate: presenter as? TaskEditDelegate)
@@ -46,7 +45,6 @@ final class TaskListRouter: TaskListRouterProtocol {
     func navigateToEditTask(task: Task) {
         guard let taskListView = viewController as? TaskListView,
               let presenter = taskListView.presenter else {
-            print("Error: Unable to get TaskListPresenter")
             return
         }
         let taskEditView = TaskEditRouter.createModule(with: task, delegate: presenter as? TaskEditDelegate)

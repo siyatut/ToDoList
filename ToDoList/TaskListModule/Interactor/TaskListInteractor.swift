@@ -97,9 +97,7 @@ final class TaskListInteractor: TaskListInteractorProtocol {
         DispatchQueue.global(qos: .background).async {
             tasks.forEach { task in
                 CoreDataManager.shared.saveTask(task) { success in
-                    if success {
-                        print("Successfully saved task with ID \(task.id)")
-                    }
+                    guard success else { return }
                 }
             }
         }

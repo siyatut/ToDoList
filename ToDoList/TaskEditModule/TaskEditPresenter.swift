@@ -64,10 +64,8 @@ final class TaskEditPresenter: TaskEditPresenterProtocol {
             interactor.saveTask(task) { success in
                 if success {
                     self.delegate?.didUpdateTask(task)
-                    print("TaskEditPresenter: Task updated with title: \(title), description: \(description)")
                     self.router.dismissView()
                 } else {
-                    print("Failed to update task")
                 }
             }
         } else {
@@ -75,10 +73,8 @@ final class TaskEditPresenter: TaskEditPresenterProtocol {
             interactor.saveTask(newTask) { success in
                 if success {
                     self.delegate?.didAddTask(newTask)
-                    print("TaskEditPresenter: Task added with title: \(title), description: \(description)")
                     self.router.dismissView()
                 } else {
-                    print("Failed to save new task")
                 }
             }
         }
