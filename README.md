@@ -6,7 +6,7 @@ This is a ToDo List application built using the VIPER architecture. The app allo
 
 #### 🛠 **Technologies**
 
-* Swift UIKit
+* Swift + UIKit
 * VIPER Architecture
 * Core Data (for local storage)
 * GCD (Grand Central Dispatch) (for background processing)
