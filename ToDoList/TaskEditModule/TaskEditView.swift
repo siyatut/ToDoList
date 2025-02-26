@@ -23,53 +23,11 @@ final class TaskEditView: UIViewController, TaskEditViewProtocol {
     var presenter: TaskEditPresenterProtocol?
 
     // MARK: - UI Components
-
-    private let titleTextField: UITextField = {
-        let textField = UITextField()
-        textField.font = UIFont.systemFont(ofSize: 34, weight: .bold)
-        textField.borderStyle = .none
-        textField.textColor = .white
-        textField.tintColor = .darkGray
-
-        let placeholderAttributes: [NSAttributedString.Key: Any] = [
-            .foregroundColor: UIColor.darkGray,
-            .font: UIFont.systemFont(ofSize: 34, weight: .bold)
-        ]
-        textField.attributedPlaceholder = NSAttributedString(
-            string: "Название задачи",
-            attributes: placeholderAttributes
-        )
-        textField.translatesAutoresizingMaskIntoConstraints = false
-        return textField
-    }()
-
-    private let descriptionTextView: UITextView = {
-        let textView = UITextView()
-        textView.font = UIFont.systemFont(ofSize: 16)
-        textView.backgroundColor = .black
-        textView.textColor = .white
-        textView.tintColor = .darkGray
-        textView.translatesAutoresizingMaskIntoConstraints = false
-        return textView
-    }()
-
-    private let dateLastUpdateLabel: UILabel = {
-        let label = UILabel()
-        label.font = UIFont.systemFont(ofSize: 12, weight: .regular)
-        label.textColor = .darkGray
-        label.translatesAutoresizingMaskIntoConstraints = false
-        return label
-    }()
-
-    private let doneButton: UIButton = {
-        let button = UIButton(type: .system)
-        button.setTitle("Готово", for: .normal)
-        button.setTitleColor(.systemYellow, for: .normal)
-        button.titleLabel?.font = UIFont.systemFont(ofSize: 17, weight: .bold)
-        button.isEnabled = false
-        button.alpha = 0
-        return button
-    }()
+    
+    private let titleTextField = UIFactory.createTextField(placeholder: "Название задачи", font: UIFont.systemFont(ofSize: 34, weight: .bold))
+    private let descriptionTextView = UIFactory.createTextView(font: UIFont.systemFont(ofSize: 16))
+    private let dateLastUpdateLabel = UIFactory.createLabel(font: UIFont.systemFont(ofSize: 12), textColor: .darkGray)
+    private let doneButton = UIFactory.createTextButton(title: "Готово")
 
     // MARK: - Lifecycle
 

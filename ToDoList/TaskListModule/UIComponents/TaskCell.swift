@@ -19,44 +19,11 @@ final class TaskCell: UITableViewCell {
 
     // MARK: - UI components
 
-    private let checkmarkButton: UIButton = {
-        let button = UIButton(type: .system)
-        let config = UIImage.SymbolConfiguration(pointSize: 24, weight: .medium)
-        button.setImage(UIImage(systemName: "circle", withConfiguration: config), for: .normal)
-        button.tintColor = .darkGray
-        return button
-    }()
-
-    private let titleLabel: UILabel = {
-        let label = UILabel()
-        label.font = UIFont.systemFont(ofSize: 16, weight: .bold)
-        label.textColor = .white
-        return label
-    }()
-
-    private let descriptionLabel: UILabel = {
-        let label = UILabel()
-        label.font = UIFont.systemFont(ofSize: 14, weight: .regular)
-        label.textColor = .white
-        label.numberOfLines = 2
-        label.lineBreakMode = .byTruncatingTail
-        return label
-    }()
-
-    private let dateLabel: UILabel = {
-        let label = UILabel()
-        label.font = UIFont.systemFont(ofSize: 12, weight: .regular)
-        label.textColor = .darkGray
-        return label
-    }()
-
-    private let backgroundContainerView: UIView = {
-        let view = UIView()
-        view.backgroundColor = .black
-        view.layer.cornerRadius = 12
-        view.clipsToBounds = true
-        return view
-    }()
+    private let checkmarkButton = UIFactory.createButton(systemImageName: "circle", tintColor: .darkGray)
+    private let titleLabel = UIFactory.createLabel(font: UIFont.systemFont(ofSize: 16, weight: .bold))
+    private let descriptionLabel = UIFactory.createLabel(font: UIFont.systemFont(ofSize: 14), numberOfLines: 2)
+    private let dateLabel = UIFactory.createLabel(font: UIFont.systemFont(ofSize: 12), textColor: .darkGray)
+    private let backgroundContainerView = UIFactory.createContainerView()
 
     // MARK: - Properties
 
