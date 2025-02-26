@@ -136,7 +136,7 @@ final class TaskCell: UITableViewCell {
     func configure(with task: Task) {
         titleLabel.text = task.title
         descriptionLabel.text = task.description
-        dateLabel.text = task.dateCreated
+        dateLabel.text = task.dateUpdated ?? task.dateCreated
 
         let textColor: UIColor = task.isCompleted ? .darkGray : .white
         let titleAttributes: [NSAttributedString.Key: Any] = [

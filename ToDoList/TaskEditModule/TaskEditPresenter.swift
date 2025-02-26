@@ -54,7 +54,7 @@ final class TaskEditPresenter: TaskEditPresenterProtocol {
     }
 
     func didTapSave(title: String, description: String) {
-        let currentDate = DateFormatter.localizedString(from: Date(), dateStyle: .short, timeStyle: .none)
+        let currentDate = DateHelper.formattedDate(from: Date())
 
         if var task = task {
             task.title = title

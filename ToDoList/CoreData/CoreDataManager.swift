@@ -67,12 +67,14 @@ class CoreDataManager {
                     existingTaskEntity.descriptionText = task.description
                     existingTaskEntity.dateCreated = task.dateCreated
                     existingTaskEntity.isCompleted = task.isCompleted
+                    existingTaskEntity.dateUpdated = DateHelper.formattedDate(from: Date())
                 } else {
                     let newTaskEntity = TaskEntity(context: backgroundContext)
                     newTaskEntity.id = task.id
                     newTaskEntity.title = task.title
                     newTaskEntity.descriptionText = task.description
                     newTaskEntity.dateCreated = task.dateCreated
+                    newTaskEntity.dateUpdated = nil
                     newTaskEntity.isCompleted = task.isCompleted
                 }
                 try backgroundContext.save()
@@ -101,9 +103,11 @@ class CoreDataManager {
                         title: taskEntity.title ?? "",
                         description: taskEntity.descriptionText ?? "",
                         dateCreated: taskEntity.dateCreated ?? "",
+                        dateUpdated: taskEntity.dateUpdated,
                         isCompleted: taskEntity.isCompleted
                     )
                 }
+
                 DispatchQueue.main.async {
                     completion(tasks)
                 }
