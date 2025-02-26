@@ -9,7 +9,7 @@ import UIKit
 
 final class TaskMapper {
     static func map(_ temporaryTask: TemporaryTask) -> Task {
-        let currentDate = DateFormatter.localizedString(from: Date(), dateStyle: .short, timeStyle: .none)
+        let currentDate = DateHelper.formattedDate(from: Date())
         return Task(
             id: String(temporaryTask.id),
             title: temporaryTask.todo,

@@ -8,7 +8,15 @@
 import UIKit
 
 struct DateHelper {
+
+    private static let dateFormatter: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.dateStyle = .short
+        formatter.timeStyle = .none
+        return formatter
+    }()
+
     static func formattedDate(from date: Date) -> String {
-        return DateFormatter.localizedString(from: date, dateStyle: .short, timeStyle: .none)
+        return dateFormatter.string(from: date)
     }
 }
