@@ -14,7 +14,7 @@ final class TaskListInteractor: TaskListInteractorProtocol {
 
     private let storage: CoreDataManagerProtocol
     private let networkManager: NetworkManagerProtocol
-    private var cachedTasks: [Task] = []
+    private(set) var cachedTasks: [Task] = []
     private let urlString = "https://dummyjson.com/todos"
 
     // MARK: - Init
@@ -36,29 +36,29 @@ final class TaskListInteractor: TaskListInteractorProtocol {
                 self.cachedTasks = cachedTasks
                 completion(cachedTasks)
             } else {
-                print("Core Data is empty, fetching tasks from URL")
-                self.fetchTasksFromURL(completion: completion)
+                print("Core Data is empty, fetching tasks from network")
+                self.fetchTasksFromNetwork(completion: completion)
             }
         }
     }
 
-    func fetchTasksFromURL(completion: @escaping ([Task]) -> Void) {
-        DispatchQueue.global(qos: .background).async {
-            self.networkManager.fetchTasks(from: self.urlString) { result in
-                switch result {
-                case .success(let temporaryTasks):
-                    let tasks = temporaryTasks.map(TaskMapper.map)
-                    self.cachedTasks = tasks
-                    self.saveTasksToCoreData(tasks: tasks)
-                    DispatchQueue.main.async {
-                        completion(tasks)
-                    }
-                case .failure(let error):
-                    print("Failed to fetch tasks: \(error.localizedDescription)")
-                    DispatchQueue.main.async {
-                        completion([])
-                    }
-                }
+    private func fetchTasksFromCoreData(completion: @escaping ([Task]) -> Void) {
+        storage.fetchTasks { tasks in
+            DispatchQueue.main.async { completion(tasks) }
+        }
+    }
+
+    private func fetchTasksFromNetwork(completion: @escaping ([Task]) -> Void) {
+        networkManager.fetchTasks(from: urlString) { result in
+            switch result {
+            case .success(let temporaryTasks):
+                let tasks = temporaryTasks.map(TaskMapper.map)
+                self.cachedTasks = tasks
+                self.saveTasksToCoreData(tasks: tasks)
+                DispatchQueue.main.async { completion(tasks) }
+            case .failure(let error):
+                print("Failed to fetch tasks: \(error.localizedDescription)")
+                DispatchQueue.main.async { completion([]) }
             }
         }
     }
@@ -79,18 +79,6 @@ final class TaskListInteractor: TaskListInteractorProtocol {
                     DispatchQueue.main.async {
                         completion(false)
                     }
-                }
-            }
-        }
-    }
-
-    // MARK: - Fetch tasks from Core Data
-
-    func fetchTasksFromCoreData(completion: @escaping ([Task]) -> Void) {
-        DispatchQueue.global(qos: .background).async {
-            self.storage.fetchTasks { tasks in
-                DispatchQueue.main.async {
-                    completion(tasks)
                 }
             }
         }

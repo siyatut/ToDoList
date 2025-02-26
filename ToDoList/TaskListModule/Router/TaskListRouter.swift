@@ -11,7 +11,7 @@ final class TaskListRouter: TaskListRouterProtocol {
 
     // MARK: - Dependencies
 
-    weak var viewController: UIViewController?
+    weak var viewController: TaskListView?
 
     // MARK: - Module Creation
 
@@ -34,20 +34,21 @@ final class TaskListRouter: TaskListRouterProtocol {
     // MARK: - Navigation
 
     func navigateToAddTask() {
-        guard let taskListView = viewController as? TaskListView,
-              let presenter = taskListView.presenter else {
-            return
-        }
-        let taskEditView = TaskEditRouter.createModule(with: nil, delegate: presenter as? TaskEditDelegate)
-        viewController?.navigationController?.pushViewController(taskEditView, animated: true)
+        navigateToTaskEdit(with: nil)
     }
 
     func navigateToEditTask(task: Task) {
-        guard let taskListView = viewController as? TaskListView,
-              let presenter = taskListView.presenter else {
-            return
-        }
-        let taskEditView = TaskEditRouter.createModule(with: task, delegate: presenter as? TaskEditDelegate)
-        viewController?.navigationController?.pushViewController(taskEditView, animated: true)
+        navigateToTaskEdit(with: task)
+    }
+
+    // MARK: - Private Methods
+
+    private func navigateToTaskEdit(with task: Task?) {
+        guard let viewController = viewController else { return }
+        let taskEditView = TaskEditRouter.createModule(
+            with: task,
+            delegate: viewController.presenter as? TaskEditDelegate
+        )
+        viewController.navigationController?.pushViewController(taskEditView, animated: true)
     }
 }

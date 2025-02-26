@@ -13,17 +13,17 @@ protocol TaskEditInteractorProtocol {
 }
 
 final class TaskEditInteractor: TaskEditInteractorProtocol {
-    
+
     // MARK: - Dependencies
-    
+
     private let storage: CoreDataManagerProtocol
-    
+
     // MARK: - Init
-    
+
     init(storage: CoreDataManagerProtocol = CoreDataManager.shared) {
         self.storage = storage
     }
-    
+
     // MARK: - Task Management
 
     func createTask(title: String, description: String) -> Task {
@@ -46,7 +46,7 @@ final class TaskEditInteractor: TaskEditInteractorProtocol {
             }
         }
     }
-    
+
     private func getFormattedDate() -> String {
         return DateFormatter.localizedString(from: Date(), dateStyle: .short, timeStyle: .none)
     }

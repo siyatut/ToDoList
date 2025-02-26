@@ -72,25 +72,6 @@ final class TaskListPresenter: TaskListPresenterProtocol {
         return isSearching ? filteredTasks[index] : tasks[index]
     }
 
-    func updateTask(_ task: Task) {
-        interactor.updateTask(task) { [weak self] success in
-            if success {
-                DispatchQueue.main.async {
-                    let updatedTasks = self?.fetchTasksFromCoreData() ?? []
-                    self?.view?.updateTasks(updatedTasks)
-                }
-            }
-        }
-    }
-
-    func fetchTasksFromCoreData() -> [Task] {
-        var tasksFromCoreData: [Task] = []
-        interactor.fetchTasksFromCoreData { tasks in
-            tasksFromCoreData = tasks
-        }
-        return tasksFromCoreData
-    }
-
     // MARK: - User actions
 
     func toggleTaskCompletion(at index: Int) {
@@ -185,23 +166,23 @@ final class TaskListPresenter: TaskListPresenterProtocol {
     }
 }
 
+// MARK: - TaskEditDelegate
+
 extension TaskListPresenter: TaskEditDelegate {
 
     func didUpdateTask(_ task: Task) {
-        interactor.updateTask(task) { [weak self] success in
-            if success {
-                if let index = self?.tasks.firstIndex(where: { $0.id == task.id }) {
-                    self?.tasks[index] = task
-                    self?.view?.updateTask(at: IndexPath(row: index, section: 0))
-                }
+        if let index = tasks.firstIndex(where: { $0.id == task.id }) {
+            tasks[index] = task
+            DispatchQueue.main.async {
+                self.view?.updateTask(at: IndexPath(row: index, section: 0))
             }
         }
     }
 
     func didAddTask(_ task: Task) {
         guard !tasks.contains(where: { $0.id == task.id }) else {
-               return
-           }
+            return
+        }
         tasks.append(task)
         DispatchQueue.main.async {
             self.view?.updateTasks(self.tasks)

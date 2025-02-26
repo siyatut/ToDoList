@@ -48,13 +48,13 @@ final class TaskEditPresenter: TaskEditPresenterProtocol {
             view?.updateTask(newTask, formattedDate: formattedDate)
         }
     }
-    
+
     // MARK: - Private Methods
 
     private func formatDateToShow(_ task: Task) -> String {
         return task.dateUpdated ?? task.dateCreated
     }
-    
+
     // MARK: - Public Methods
 
     func didTapSave(title: String, description: String) {

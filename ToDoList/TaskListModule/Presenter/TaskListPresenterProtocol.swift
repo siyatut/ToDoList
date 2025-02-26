@@ -11,7 +11,6 @@ protocol TaskListPresenterProtocol: AnyObject {
     func viewDidLoad()
     func numberOfRows() -> Int
     func task(at index: Int) -> Task
-    func updateTask(_ task: Task)
 
     func didTapAddTask()
     func didSelectTask(at index: Int)
