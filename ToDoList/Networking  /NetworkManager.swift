@@ -16,8 +16,7 @@ final class NetworkManager: NetworkManagerProtocol {
             completion(.failure(NSError(domain: "", code: -1, userInfo: [NSLocalizedDescriptionKey: "Invalid URL"])))
             return
         }
-        let task = URLSession.shared.dataTask(with: url) { [weak self] data, _, error in
-            guard self != nil else { return }
+        let task = URLSession.shared.dataTask(with: url) { data, _, error in
             if let error = error {
                 completion(.failure(error))
                 return

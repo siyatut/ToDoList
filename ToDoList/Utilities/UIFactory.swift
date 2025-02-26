@@ -5,11 +5,10 @@
 //  Created by Anastasia Tyutinova on 26/2/2568 BE.
 //
 
-
 import UIKit
 
 final class UIFactory {
-    
+
     static func createLabel(
         text: String = "",
         font: UIFont = UIFont.systemFont(ofSize: 14),
@@ -26,7 +25,7 @@ final class UIFactory {
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }
-    
+
     static func createTextField(
         placeholder: String = "",
         font: UIFont = UIFont.systemFont(ofSize: 14),

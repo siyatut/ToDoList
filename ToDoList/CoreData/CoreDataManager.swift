@@ -7,7 +7,7 @@
 
 import CoreData
 
-class CoreDataManager {
+final class CoreDataManager: CoreDataManagerProtocol {
 
     // MARK: - Singleton instance
 
@@ -19,15 +19,7 @@ class CoreDataManager {
 
     // MARK: - Core Data Stack
 
-    var context: NSManagedObjectContext {
-        return persistentContainer.viewContext
-    }
-
-    private var backgroundContext: NSManagedObjectContext {
-        return persistentContainer.newBackgroundContext()
-    }
-
-    lazy var persistentContainer: NSPersistentContainer = {
+    private let persistentContainer: NSPersistentContainer = {
         let container = NSPersistentContainer(name: "TaskModel")
         container.loadPersistentStores { _, error in
             if let error = error {
@@ -36,6 +28,14 @@ class CoreDataManager {
         }
         return container
     }()
+
+    private var backgroundContext: NSManagedObjectContext {
+        return persistentContainer.newBackgroundContext()
+    }
+
+    var context: NSManagedObjectContext {
+        return persistentContainer.viewContext
+    }
 
     // MARK: - Save Context
 

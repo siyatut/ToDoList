@@ -12,13 +12,18 @@ final class TaskListInteractor: TaskListInteractorProtocol {
 
     // MARK: - Dependencies
 
+    private let storage: CoreDataManagerProtocol
     private let networkManager: NetworkManagerProtocol
     private var cachedTasks: [Task] = []
     private let urlString = "https://dummyjson.com/todos"
 
     // MARK: - Init
 
-    init(networkManager: NetworkManagerProtocol = NetworkManager()) {
+    init(
+        storage: CoreDataManagerProtocol = CoreDataManager.shared,
+        networkManager: NetworkManagerProtocol = NetworkManager()
+    ) {
+        self.storage = storage
         self.networkManager = networkManager
     }
 
@@ -62,7 +67,7 @@ final class TaskListInteractor: TaskListInteractorProtocol {
 
     func updateTask(_ task: Task, completion: @escaping (Bool) -> Void) {
         DispatchQueue.global(qos: .userInitiated).async {
-            CoreDataManager.shared.saveTask(task) { success in
+            self.storage.saveTask(task) { success in
                 if success {
                     if let index = self.cachedTasks.firstIndex(where: { $0.id == task.id }) {
                         self.cachedTasks[index] = task
@@ -83,7 +88,7 @@ final class TaskListInteractor: TaskListInteractorProtocol {
 
     func fetchTasksFromCoreData(completion: @escaping ([Task]) -> Void) {
         DispatchQueue.global(qos: .background).async {
-            CoreDataManager.shared.fetchTasks { tasks in
+            self.storage.fetchTasks { tasks in
                 DispatchQueue.main.async {
                     completion(tasks)
                 }
@@ -96,7 +101,7 @@ final class TaskListInteractor: TaskListInteractorProtocol {
     func saveTasksToCoreData(tasks: [Task]) {
         DispatchQueue.global(qos: .background).async {
             tasks.forEach { task in
-                CoreDataManager.shared.saveTask(task) { success in
+                self.storage.saveTask(task) { success in
                     guard success else { return }
                 }
             }
@@ -107,7 +112,7 @@ final class TaskListInteractor: TaskListInteractorProtocol {
 
     func deleteTask(_ task: Task, completion: @escaping (Bool) -> Void) {
         DispatchQueue.global(qos: .userInitiated).async {
-            CoreDataManager.shared.deleteTask(task) { success in
+            self.storage.deleteTask(task) { success in
                 if success {
                     if let index = self.cachedTasks.firstIndex(where: { $0.id == task.id }) {
                         self.cachedTasks.remove(at: index)

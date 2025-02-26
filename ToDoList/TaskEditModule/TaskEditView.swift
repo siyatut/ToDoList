@@ -23,8 +23,11 @@ final class TaskEditView: UIViewController, TaskEditViewProtocol {
     var presenter: TaskEditPresenterProtocol?
 
     // MARK: - UI Components
-    
-    private let titleTextField = UIFactory.createTextField(placeholder: "Название задачи", font: UIFont.systemFont(ofSize: 34, weight: .bold))
+
+    private let titleTextField = UIFactory.createTextField(
+        placeholder: "Название задачи",
+        font: UIFont.systemFont(ofSize: 34, weight: .bold)
+    )
     private let descriptionTextView = UIFactory.createTextView(font: UIFont.systemFont(ofSize: 16))
     private let dateLastUpdateLabel = UIFactory.createLabel(font: UIFont.systemFont(ofSize: 12), textColor: .darkGray)
     private let doneButton = UIFactory.createTextButton(title: "Готово")
