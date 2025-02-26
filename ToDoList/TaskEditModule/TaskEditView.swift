@@ -11,11 +11,6 @@ protocol TaskEditViewProtocol: AnyObject {
     func updateTask(_ task: Task, formattedDate: String)
 }
 
-protocol TaskEditDelegate: AnyObject {
-    func didUpdateTask(_ task: Task)
-    func didAddTask(_ task: Task)
-}
-
 final class TaskEditView: UIViewController, TaskEditViewProtocol {
 
     // MARK: - Dependencies

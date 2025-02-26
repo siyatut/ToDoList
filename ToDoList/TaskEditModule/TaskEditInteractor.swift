@@ -9,11 +9,22 @@ import UIKit
 
 protocol TaskEditInteractorProtocol {
     func createTask(title: String, description: String) -> Task
-    func getFormattedDate() -> String
     func saveTask(_ task: Task, completion: @escaping (Bool) -> Void)
 }
 
 final class TaskEditInteractor: TaskEditInteractorProtocol {
+    
+    // MARK: - Dependencies
+    
+    private let storage: CoreDataManagerProtocol
+    
+    // MARK: - Init
+    
+    init(storage: CoreDataManagerProtocol = CoreDataManager.shared) {
+        self.storage = storage
+    }
+    
+    // MARK: - Task Management
 
     func createTask(title: String, description: String) -> Task {
         return Task(
@@ -26,17 +37,17 @@ final class TaskEditInteractor: TaskEditInteractorProtocol {
         )
     }
 
-    func getFormattedDate() -> String {
-        return DateFormatter.localizedString(from: Date(), dateStyle: .short, timeStyle: .none)
-    }
-
     func saveTask(_ task: Task, completion: @escaping (Bool) -> Void) {
         DispatchQueue.global(qos: .userInitiated).async {
-            CoreDataManager.shared.saveTask(task) { success in
+            self.storage.saveTask(task) { success in
                 DispatchQueue.main.async {
                     completion(success)
                 }
             }
         }
+    }
+    
+    private func getFormattedDate() -> String {
+        return DateFormatter.localizedString(from: Date(), dateStyle: .short, timeStyle: .none)
     }
 }

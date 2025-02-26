@@ -48,10 +48,14 @@ final class TaskEditPresenter: TaskEditPresenterProtocol {
             view?.updateTask(newTask, formattedDate: formattedDate)
         }
     }
+    
+    // MARK: - Private Methods
 
     private func formatDateToShow(_ task: Task) -> String {
         return task.dateUpdated ?? task.dateCreated
     }
+    
+    // MARK: - Public Methods
 
     func didTapSave(title: String, description: String) {
         let currentDate = DateHelper.formattedDate(from: Date())
@@ -65,7 +69,6 @@ final class TaskEditPresenter: TaskEditPresenterProtocol {
                 if success {
                     self.delegate?.didUpdateTask(task)
                     self.router.dismissView()
-                } else {
                 }
             }
         } else {
@@ -74,7 +77,6 @@ final class TaskEditPresenter: TaskEditPresenterProtocol {
                 if success {
                     self.delegate?.didAddTask(newTask)
                     self.router.dismissView()
-                } else {
                 }
             }
         }
