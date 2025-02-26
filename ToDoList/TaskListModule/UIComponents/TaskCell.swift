@@ -25,10 +25,6 @@ final class TaskCell: UITableViewCell {
     private let dateLabel = UIFactory.createLabel(font: UIFont.systemFont(ofSize: 12), textColor: .darkGray)
     private let backgroundContainerView = UIFactory.createContainerView()
 
-    // MARK: - Properties
-
-    private var isCompleted = false
-
     // MARK: - Init
 
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
@@ -45,6 +41,13 @@ final class TaskCell: UITableViewCell {
         fatalError("init(coder:) has not been implemented")
     }
 
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        titleLabel.attributedText = nil
+        descriptionLabel.attributedText = nil
+        checkmarkButton.setImage(UIImage(systemName: "circle"), for: .normal)
+    }
+
     // MARK: - Setup UI
 
     private func setupUI() {
@@ -58,11 +61,9 @@ final class TaskCell: UITableViewCell {
     // MARK: - Setup constraints
 
     private func setupConstraints() {
-        backgroundContainerView.translatesAutoresizingMaskIntoConstraints = false
-        checkmarkButton.translatesAutoresizingMaskIntoConstraints = false
-        titleLabel.translatesAutoresizingMaskIntoConstraints = false
-        descriptionLabel.translatesAutoresizingMaskIntoConstraints = false
-        dateLabel.translatesAutoresizingMaskIntoConstraints = false
+        [backgroundContainerView, checkmarkButton, titleLabel, descriptionLabel, dateLabel].forEach {
+            $0.translatesAutoresizingMaskIntoConstraints = false
+        }
 
         NSLayoutConstraint.activate([
             backgroundContainerView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
@@ -98,7 +99,8 @@ final class TaskCell: UITableViewCell {
     @objc private func checkmarkTapped() {
         onCheckmarkTapped?()
     }
-    // MARK: - Configure
+
+    // MARK: - Configuration
 
     func configure(with task: Task) {
         titleLabel.text = task.title

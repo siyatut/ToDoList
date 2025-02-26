@@ -26,7 +26,7 @@ extension TaskListView {
         setupKeyboardDismissRecognizer()
     }
 
-    func setupNavigationBar() {
+    private func setupNavigationBar() {
         let titleLabel = UILabel()
         titleLabel.text = "Задачи"
         titleLabel.font = UIFont.systemFont(ofSize: 34, weight: .bold)
@@ -36,7 +36,7 @@ extension TaskListView {
         navigationItem.leftBarButtonItem = titleItem
     }
 
-    func setupContainerView() {
+    private func setupContainerView() {
         let customColor = UIColor(red: 39/255, green: 39/255, blue: 41/255, alpha: 1.0)
         searchContainerView.backgroundColor = customColor
         searchContainerView.layer.cornerRadius = 10
@@ -53,7 +53,7 @@ extension TaskListView {
         ])
     }
 
-    func setupmicrophoneButton() {
+    private func setupmicrophoneButton() {
         let microphoneImage = UIImage(systemName: "mic.fill")
         microphoneButton.setImage(microphoneImage, for: .normal)
         microphoneButton.tintColor = .darkGray
@@ -70,7 +70,7 @@ extension TaskListView {
         microphoneButton.addTarget(self, action: #selector(didTapMicrophoneButton), for: .touchUpInside)
     }
 
-    func setupSearchBar() {
+    private func setupSearchBar() {
         searchBar.searchBarStyle = .minimal
         searchBar.delegate = self
         searchBar.tintColor = .white
@@ -99,7 +99,7 @@ extension TaskListView {
         ])
     }
 
-    func setupTableView() {
+    private func setupTableView() {
         tableView.backgroundColor = .black
         tableView.separatorStyle = .singleLine
         let customColor = UIColor(red: 39/255, green: 39/255, blue: 41/255, alpha: 1.0)
@@ -118,7 +118,7 @@ extension TaskListView {
         ])
     }
 
-    func setupFooterView() {
+    private func setupFooterView() {
         let customColor = UIColor(red: 39/255, green: 39/255, blue: 41/255, alpha: 1.0)
         taskFooterView.backgroundColor = customColor
         view.addSubview(taskFooterView)
@@ -135,7 +135,7 @@ extension TaskListView {
 
     }
 
-    func setupTaskCountLabel() {
+    private func setupTaskCountLabel() {
         taskCountLabel.font = UIFont.systemFont(ofSize: 11)
         taskCountLabel.textColor = .white
 
@@ -147,7 +147,7 @@ extension TaskListView {
         ])
     }
 
-    func setupAddTaskButton() {
+    private func setupAddTaskButton() {
         var config = UIButton.Configuration.plain()
         config.image = UIImage(systemName: "square.and.pencil")
         config.baseForegroundColor = .yellow
@@ -165,7 +165,7 @@ extension TaskListView {
         ])
     }
 
-    func setupKeyboardDismissRecognizer() {
+    private func setupKeyboardDismissRecognizer() {
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
         tapGesture.cancelsTouchesInView = false
         view.addGestureRecognizer(tapGesture)

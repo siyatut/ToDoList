@@ -11,7 +11,7 @@ final class TaskListView: UIViewController, TaskListViewProtocol {
 
     // MARK: - Properties
 
-    private var tasks: [Task] = []
+    private(set) var tasks: [Task] = []
     var presenter: TaskListPresenterProtocol?
     var selectedIndexPath: IndexPath?
 
@@ -66,22 +66,33 @@ final class TaskListView: UIViewController, TaskListViewProtocol {
 
     private func updateTaskCountLabel() {
         let taskCount = tasks.count
-        let taskWord: String
-
-        if taskCount == 1 {
-            taskWord = "задача"
-        } else if taskCount > 1 && taskCount < 5 {
-            taskWord = "задачи"
-        } else {
-            taskWord = "задач"
-        }
-
+        let taskWord = getTaskWord(for: taskCount)
         let taskCountText = "\(taskCount) \(taskWord)"
 
         DispatchQueue.main.async {
             self.taskCountLabel.text = taskCountText
         }
     }
+
+    private func getTaskWord(for count: Int) -> String {
+        let lastDigit = count % 10
+        let lastTwoDigits = count % 100
+
+        if lastTwoDigits >= 11 && lastTwoDigits <= 19 {
+            return "задач"
+        }
+
+        switch lastDigit {
+        case 1:
+            return "задача"
+        case 2, 3, 4:
+            return "задачи"
+        default:
+            return "задач"
+        }
+    }
+
+    // MARK: - Task Updates
 
     func updateTask(at indexPath: IndexPath) {
         tableView.reloadRows(at: [indexPath], with: .automatic)
@@ -90,9 +101,7 @@ final class TaskListView: UIViewController, TaskListViewProtocol {
     func updateTasks(_ tasks: [Task]) {
         self.tasks = tasks
         updateTaskCountLabel()
-        DispatchQueue.main.async {
-            self.tableView.reloadData()
-        }
+        self.tableView.reloadData()
     }
 
     func deleteTask(at indexPath: IndexPath) {
@@ -100,14 +109,13 @@ final class TaskListView: UIViewController, TaskListViewProtocol {
 
         tableView.performBatchUpdates {
             self.tasks.remove(at: indexPath.row)
-            self.tableView.deleteRows(
-                at: [indexPath],
-                with: .automatic
-            )
+            self.tableView.deleteRows(at: [indexPath], with: .automatic)
         } completion: { _ in
             self.updateTaskCountLabel()
         }
     }
+
+    // MARK: - Cell Highlight
 
     func resetHighlightForCell(at indexPath: IndexPath) {
         if let cell = tableView.cellForRow(at: indexPath) as? TaskCell {
