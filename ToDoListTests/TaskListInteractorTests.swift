@@ -16,7 +16,7 @@ final class TaskListInteractorTests: XCTestCase {
     override func setUp() {
         super.setUp()
         mockCoreDataManager = MockCoreDataManager()
-        interactor = TaskListInteractor(networkManager: MockNetworkManager())
+        interactor = TaskListInteractor(storage: mockCoreDataManager)
     }
 
     override func tearDown() {
@@ -35,9 +35,13 @@ final class TaskListInteractorTests: XCTestCase {
         )
         mockCoreDataManager.savedTasks = [task]
 
+        let expectation = self.expectation(description: "Fetch Tasks")
         interactor.fetchTasks { tasks in
-            XCTAssertEqual(tasks.count, 1)
-            XCTAssertEqual(tasks.first?.title, "Test Task")
+            XCTAssertEqual(tasks.count, 1, "Expected to fetch one task")
+            XCTAssertEqual(tasks.first?.title, "Test Task", "Fetched task title should match")
+            expectation.fulfill()
         }
+
+        waitForExpectations(timeout: 1, handler: nil)
     }
 }

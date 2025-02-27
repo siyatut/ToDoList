@@ -8,22 +8,30 @@
 import Foundation
 @testable import ToDoList
 
-final class MockCoreDataManager: CoreDataManager {
+final class MockCoreDataManager: CoreDataManagerProtocol {
 
     var savedTasks: [Task] = []
     var deletedTasks: [Task] = []
 
-    override func saveTask(_ task: Task, completion: @escaping (Bool) -> Void) {
-        savedTasks.append(task)
+    func saveTask(_ task: Task, completion: @escaping (Bool) -> Void) {
+        if let index = savedTasks.firstIndex(where: { $0.id == task.id }) {
+            savedTasks[index] = task
+        } else {
+            savedTasks.append(task)
+        }
         completion(true)
     }
 
-    override func deleteTask(_ task: Task, completion: @escaping (Bool) -> Void) {
-        deletedTasks.append(task)
-        completion(true)
+    func deleteTask(_ task: Task, completion: @escaping (Bool) -> Void) {
+        if let index = savedTasks.firstIndex(where: { $0.id == task.id }) {
+            savedTasks.remove(at: index)
+            completion(true)
+        } else {
+            completion(false)
+        }
     }
 
-    override func fetchTasks(completion: @escaping ([Task]) -> Void) {
+    func fetchTasks(completion: @escaping ([Task]) -> Void) {
         completion(savedTasks)
     }
 }

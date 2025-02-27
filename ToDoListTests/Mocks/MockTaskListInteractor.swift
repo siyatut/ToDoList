@@ -13,6 +13,7 @@ final class MockTaskListInteractor: TaskListInteractorProtocol {
     var cachedTasks: [Task] = []
     var isFetchCalled = false
     var isDeleteCalled = false
+    var isUpdateCalled = false
 
     func fetchTasks(completion: @escaping ([Task]) -> Void) {
         isFetchCalled = true
@@ -20,10 +21,13 @@ final class MockTaskListInteractor: TaskListInteractorProtocol {
     }
 
     func updateTask(_ task: Task, completion: @escaping (Bool) -> Void) {
+        isUpdateCalled = true
         if let index = cachedTasks.firstIndex(where: { $0.id == task.id }) {
             cachedTasks[index] = task
+            completion(true)
+        } else {
+            completion(false)
         }
-        completion(true)
     }
 
     func deleteTask(_ task: Task, completion: @escaping (Bool) -> Void) {
@@ -34,9 +38,5 @@ final class MockTaskListInteractor: TaskListInteractorProtocol {
         } else {
             completion(false)
         }
-    }
-
-    func fetchTasksFromCoreData(completion: @escaping ([Task]) -> Void) {
-        completion(cachedTasks)
     }
 }

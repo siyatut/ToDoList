@@ -9,6 +9,7 @@ import Foundation
 @testable import ToDoList
 
 final class MockTaskListView: TaskListViewProtocol {
+
     var tasks: [Task] = []
     var deletedTaskIndexPaths: [IndexPath] = []
 
