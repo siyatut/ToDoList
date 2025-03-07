@@ -11,4 +11,6 @@ This is a ToDo List application built using the VIPER architecture. The app allo
 * Core Data (for local storage)
 * GCD (Grand Central Dispatch) (for background processing)
 * XCTest (for unit testing)
+* SwiftLint (for static code analysis)  
+
 
